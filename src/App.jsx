@@ -1,12 +1,22 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/Home.jsx'
-import Dashboard from './pages/Dashboard.jsx'
+import Login from './pages/Login.jsx'
+import AdminLayout from './pages/AdminLayout.jsx'
+import PropertiesPage from './pages/admin/PropertiesPage.jsx'
+import ClientsPage from './pages/admin/ClientsPage.jsx'
+import DealsPage from './pages/admin/DealsPage.jsx'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/admin" element={<Dashboard />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Navigate to="properties" replace />} />
+        <Route path="properties" element={<PropertiesPage />} />
+        <Route path="clients" element={<ClientsPage />} />
+        <Route path="deals" element={<DealsPage />} />
+      </Route>
     </Routes>
   )
 }
