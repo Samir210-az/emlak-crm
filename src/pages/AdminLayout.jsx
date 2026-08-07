@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Building2, Users, Handshake, LogOut, Home, Lock } from "lucide-react";
+import { Building2, Users, Handshake, LogOut, Home, Lock, LayoutDashboard } from "lucide-react";
 import { getSession, clearSession } from "../lib/session.js";
 import { watchProfil } from "../lib/db.js";
 
 const navItems = [
+  { to: "/admin/dashboard", label: "İcmal", icon: LayoutDashboard },
   { to: "/admin/properties", label: "Obyektlər", icon: Building2 },
   { to: "/admin/clients", label: "Müştərilər", icon: Users },
   { to: "/admin/deals", label: "Sövdələşmələr", icon: Handshake },

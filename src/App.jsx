@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/Home.jsx";
 import Auth from "./pages/Auth.jsx";
 import AdminLayout from "./pages/AdminLayout.jsx";
+import DashboardHome from "./pages/admin/DashboardHome.jsx";
 import PropertiesPage from "./pages/admin/PropertiesPage.jsx";
 import ClientsPage from "./pages/admin/ClientsPage.jsx";
 import DealsPage from "./pages/admin/DealsPage.jsx";
@@ -17,7 +18,8 @@ export default function App() {
       <Route path="/elanlar/:tenantId" element={<PublicListings />} />
       <Route path="/elanlar/:tenantId/:propertyId" element={<PropertyDetail />} />
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="properties" replace />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<DashboardHome />} />
         <Route path="properties" element={<PropertiesPage />} />
         <Route path="clients" element={<ClientsPage />} />
         <Route path="deals" element={<DealsPage />} />

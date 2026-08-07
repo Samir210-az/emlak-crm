@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, User, Home, Coins, Handshake } from 'lucide-react'
 import { watchDeals, addDeal, updateDealStage, deleteDeal, DEAL_STAGES } from '../../lib/db.js'
 
-const stageLabels = {
-  beh: 'Beh müqaviləsi',
-  bank_tesdiqi: 'Bank təsdiqi',
-  notariat: 'Notariat',
-  tehvil_teslim: 'Təhvil-təslim',
-  bitib: 'Bitib',
+const stageMeta = {
+  beh: { label: 'Beh müqaviləsi', color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  bank_tesdiqi: { label: 'Bank təsdiqi', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  notariat: { label: 'Notariat', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  tehvil_teslim: { label: 'Təhvil-təslim', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+  bitib: { label: 'Bağlanıb', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
 }
 
 const emptyForm = { propertyTitle: '', clientName: '', amount: '', commission: '' }
@@ -18,6 +18,7 @@ export default function DealsPage() {
   const [deals, setDeals] = useState([])
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
+  const [dragId, setDragId] = useState(null)
 
   useEffect(() => watchDeals(tenantId, setDeals), [tenantId])
 
@@ -29,15 +30,26 @@ export default function DealsPage() {
     setShowForm(false)
   }
 
+  function onDrop(stage) {
+    if (dragId) updateDealStage(tenantId, dragId, stage)
+    setDragId(null)
+  }
+
+  const totalPipeline = deals.filter((d) => d.stage !== 'bitib').reduce((s, d) => s + (Number(d.amount) || 0), 0)
+
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="p-6 sm:p-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-slate-800">Sövdələşmələr</h1>
-          <p className="text-sm text-slate-500">{deals.length} aktiv sövdələşmə</p>
+          <h1 className="text-xl font-semibold text-slate-800">Sövdələşmə boru xətti</h1>
+          <p className="text-sm text-slate-500">
+            {deals.length} sövdələşmə · aktiv boru xəttində {totalPipeline.toLocaleString('az-AZ')} AZN
+          </p>
         </div>
-        <button onClick={() => setShowForm((s) => !s)}
-          className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
+        <button
+          onClick={() => setShowForm((s) => !s)}
+          className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
+        >
           <Plus size={16} /> Yeni sövdələşmə
         </button>
       </div>
@@ -58,35 +70,62 @@ export default function DealsPage() {
         </form>
       )}
 
-      <div className="space-y-3">
-        {deals.map((d) => (
-          <div key={d.id} className="rounded-xl border border-slate-200 bg-white p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-slate-800">{d.propertyTitle}</p>
-                <p className="text-xs text-slate-500">{d.clientName} · {d.amount ? `${d.amount} AZN` : ''} {d.commission ? `(komissiya ${d.commission} AZN)` : ''}</p>
+      {deals.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
+          <Handshake size={28} className="mb-3 text-slate-300" />
+          <p className="text-sm font-medium text-slate-600">Hələ sövdələşmə yoxdur</p>
+          <p className="mt-1 text-xs text-slate-400">İlk sövdələşməni əlavə et, sonra kartı sürükləyərək mərhələni dəyiş.</p>
+        </div>
+      ) : (
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {DEAL_STAGES.map((stage) => {
+            const items = deals.filter((d) => d.stage === stage)
+            const meta = stageMeta[stage]
+            return (
+              <div
+                key={stage}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => onDrop(stage)}
+                className="w-72 shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-3"
+              >
+                <div className={`mb-3 flex items-center justify-between rounded-lg border px-3 py-2 text-xs font-semibold ${meta.color}`}>
+                  {meta.label}
+                  <span className="rounded-full bg-white/70 px-2 py-0.5">{items.length}</span>
+                </div>
+                <div className="space-y-2">
+                  {items.map((d) => (
+                    <div
+                      key={d.id}
+                      draggable
+                      onDragStart={() => setDragId(d.id)}
+                      className="cursor-grab rounded-xl border border-slate-200 bg-white p-3 shadow-sm active:cursor-grabbing"
+                    >
+                      <div className="flex items-start justify-between">
+                        <p className="flex items-center gap-1.5 text-sm font-semibold text-slate-800">
+                          <Home size={12} className="text-slate-400" /> {d.propertyTitle}
+                        </p>
+                        <button onClick={() => deleteDeal(tenantId, d.id)} className="text-slate-300 hover:text-red-500">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                      <p className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-500">
+                        <User size={11} /> {d.clientName}
+                      </p>
+                      {(d.amount || d.commission) && (
+                        <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-brand-600">
+                          <Coins size={11} />
+                          {d.amount ? `${d.amount} AZN` : ''} {d.commission ? `· komissiya ${d.commission} AZN` : ''}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                  {items.length === 0 && <p className="py-6 text-center text-[11px] text-slate-300">Boşdur</p>}
+                </div>
               </div>
-              <button onClick={() => deleteDeal(tenantId, d.id)} className="text-slate-300 hover:text-red-500">
-                <Trash2 size={15} />
-              </button>
-            </div>
-            <div className="mt-3 flex gap-1.5">
-              {DEAL_STAGES.map((stage) => (
-                <button
-                  key={stage}
-                  onClick={() => updateDealStage(tenantId, d.id, stage)}
-                  className={`flex-1 rounded-md py-1.5 text-[11px] font-medium transition ${
-                    d.stage === stage ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                  }`}
-                >
-                  {stageLabels[stage]}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-        {deals.length === 0 && <p className="py-10 text-center text-sm text-slate-400">Hələ sövdələşmə yoxdur.</p>}
-      </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

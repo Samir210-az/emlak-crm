@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send } from 'lucide-react'
+import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2 } from 'lucide-react'
 import { watchProperties, addProperty, deleteProperty, updateProperty } from '../../lib/db.js'
-import { generateListingText, BINA_AZ_NEW_LISTING_URL } from '../../lib/listingText.js'
+import { generateListingText, LISTING_PLATFORMS } from '../../lib/listingText.js'
 
 const emptyForm = {
   title: '', district: '', address: '', rooms: '', floor: '', floorTotal: '',
@@ -38,7 +38,11 @@ export default function PropertiesPage() {
   }
 
   function openBinaModal(p) {
-    setBinaModal({ property: p, text: generateListingText(p), copied: false })
+    setBinaModal({ property: p, platform: 'bina', text: generateListingText(p, 'bina'), copied: false })
+  }
+
+  function switchPlatform(platformId) {
+    setBinaModal((m) => ({ ...m, platform: platformId, text: generateListingText(m.property, platformId), copied: false }))
   }
 
   function copyBinaText() {
@@ -198,14 +202,18 @@ export default function PropertiesPage() {
                   onClick={() => openBinaModal(p)}
                   className="flex items-center gap-1 text-xs font-medium text-amber-600 hover:text-amber-700"
                 >
-                  <Send size={11} /> Bina.az mətni
+                  <Send size={11} /> Elan mətni
                 </button>
               </div>
             </div>
           </div>
         ))}
         {properties.length === 0 && (
-          <p className="col-span-full py-10 text-center text-sm text-slate-400">Hələ obyekt əlavə olunmayıb.</p>
+          <div className="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
+            <Building2 size={28} className="mb-3 text-slate-300" />
+            <p className="text-sm font-medium text-slate-600">Hələ obyekt əlavə olunmayıb</p>
+            <p className="mt-1 text-xs text-slate-400">"Yeni obyekt" düyməsinə bas və ilk elanını əlavə et.</p>
+          </div>
         )}
       </div>
 
@@ -214,11 +222,24 @@ export default function PropertiesPage() {
           <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 flex items-center gap-2">
               <HomeIcon size={18} className="text-amber-500" />
-              <h2 className="font-semibold text-slate-800">Bina.az üçün hazır mətn</h2>
+              <h2 className="font-semibold text-slate-800">Elan mətni — platforma seç</h2>
+            </div>
+            <div className="mb-3 flex gap-2">
+              {LISTING_PLATFORMS.map((pl) => (
+                <button
+                  key={pl.id}
+                  onClick={() => switchPlatform(pl.id)}
+                  className={`flex-1 rounded-lg py-2 text-xs font-semibold transition ${
+                    binaModal.platform === pl.id ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {pl.name}
+                </button>
+              ))}
             </div>
             <p className="mb-3 text-xs text-slate-500">
-              Bina.az-ın açıq API-si yoxdur, elan yalnız əl ilə daxil edilir. Mətni kopyalayıb
-              bina.az-ın "Yeni elan" səhifəsində yapışdıra bilərsən.
+              Bu saytların açıq API-si yoxdur, elan yalnız əl ilə daxil edilir. Mətni kopyalayıb
+              seçdiyin platformanın "Yeni elan" səhifəsində yapışdıra bilərsən.
             </p>
             <textarea
               readOnly
@@ -234,12 +255,12 @@ export default function PropertiesPage() {
                 <Copy size={14} /> {binaModal.copied ? 'Kopyalandı!' : 'Mətni kopyala'}
               </button>
               <a
-                href={BINA_AZ_NEW_LISTING_URL}
+                href={LISTING_PLATFORMS.find((pl) => pl.id === binaModal.platform).url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                <ExternalLink size={14} /> Bina.az-ı aç
+                <ExternalLink size={14} /> Saytı aç
               </a>
             </div>
             <button onClick={() => setBinaModal(null)} className="mt-3 w-full text-center text-xs text-slate-400 hover:text-slate-600">
