@@ -14,17 +14,17 @@ const stageLabels = {
 const emptyForm = { propertyTitle: '', clientName: '', amount: '', commission: '' }
 
 export default function DealsPage() {
-  const { uid } = useOutletContext()
+  const { uid: tenantId } = useOutletContext()
   const [deals, setDeals] = useState([])
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
 
-  useEffect(() => watchDeals(uid, setDeals), [uid])
+  useEffect(() => watchDeals(tenantId, setDeals), [tenantId])
 
   async function handleAdd(e) {
     e.preventDefault()
     if (!form.propertyTitle || !form.clientName) return
-    await addDeal(uid, form)
+    await addDeal(tenantId, form)
     setForm(emptyForm)
     setShowForm(false)
   }
@@ -66,7 +66,7 @@ export default function DealsPage() {
                 <p className="text-sm font-semibold text-slate-800">{d.propertyTitle}</p>
                 <p className="text-xs text-slate-500">{d.clientName} · {d.amount ? `${d.amount} AZN` : ''} {d.commission ? `(komissiya ${d.commission} AZN)` : ''}</p>
               </div>
-              <button onClick={() => deleteDeal(uid, d.id)} className="text-slate-300 hover:text-red-500">
+              <button onClick={() => deleteDeal(tenantId, d.id)} className="text-slate-300 hover:text-red-500">
                 <Trash2 size={15} />
               </button>
             </div>
@@ -74,7 +74,7 @@ export default function DealsPage() {
               {DEAL_STAGES.map((stage) => (
                 <button
                   key={stage}
-                  onClick={() => updateDealStage(uid, d.id, stage)}
+                  onClick={() => updateDealStage(tenantId, d.id, stage)}
                   className={`flex-1 rounded-md py-1.5 text-[11px] font-medium transition ${
                     d.stage === stage ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                   }`}

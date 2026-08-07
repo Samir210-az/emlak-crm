@@ -6,17 +6,17 @@ import { watchProperties, addProperty, deleteProperty } from '../../lib/db.js'
 const emptyForm = { title: '', district: '', rooms: '', price: '', image: '', status: 'aktiv' }
 
 export default function PropertiesPage() {
-  const { uid } = useOutletContext()
+  const { uid: tenantId } = useOutletContext()
   const [properties, setProperties] = useState([])
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
 
-  useEffect(() => watchProperties(uid, setProperties), [uid])
+  useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
   async function handleAdd(e) {
     e.preventDefault()
     if (!form.title || !form.price) return
-    await addProperty(uid, form)
+    await addProperty(tenantId, form)
     setForm(emptyForm)
     setShowForm(false)
   }
@@ -75,7 +75,7 @@ export default function PropertiesPage() {
                     <MapPin size={12} /> {p.district || '—'}
                   </p>
                 </div>
-                <button onClick={() => deleteProperty(uid, p.id)} className="text-slate-300 hover:text-red-500">
+                <button onClick={() => deleteProperty(tenantId, p.id)} className="text-slate-300 hover:text-red-500">
                   <Trash2 size={16} />
                 </button>
               </div>

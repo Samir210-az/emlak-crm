@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Building2, MessageSquareText, ShieldCheck, Sparkles } from 'lucide-react'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
@@ -44,12 +45,12 @@ export default function HomePage() {
             AI agent — hamısı bir platformada.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-700 shadow-lg transition hover:scale-105">
-              Pulsuz sınayın
-            </button>
-            <button className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-              Demo izlə
-            </button>
+            <Link to="/qeydiyyat" className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-700 shadow-lg transition hover:scale-105">
+              7 gün pulsuz sınayın
+            </Link>
+            <Link to="/giris" className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              Daxil ol
+            </Link>
           </div>
         </div>
       </section>

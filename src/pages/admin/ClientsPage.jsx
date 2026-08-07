@@ -6,17 +6,17 @@ import { watchClients, addClient, deleteClient } from '../../lib/db.js'
 const emptyForm = { name: '', phone: '', budget: '', district: '', rooms: '' }
 
 export default function ClientsPage() {
-  const { uid } = useOutletContext()
+  const { uid: tenantId } = useOutletContext()
   const [clients, setClients] = useState([])
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
 
-  useEffect(() => watchClients(uid, setClients), [uid])
+  useEffect(() => watchClients(tenantId, setClients), [tenantId])
 
   async function handleAdd(e) {
     e.preventDefault()
     if (!form.name || !form.phone) return
-    await addClient(uid, form)
+    await addClient(tenantId, form)
     setForm(emptyForm)
     setShowForm(false)
   }
@@ -59,7 +59,7 @@ export default function ClientsPage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xs text-slate-500">{c.district} · {c.budget ? `${c.budget} AZN` : '—'}</span>
-              <button onClick={() => deleteClient(uid, c.id)} className="text-slate-300 hover:text-red-500">
+              <button onClick={() => deleteClient(tenantId, c.id)} className="text-slate-300 hover:text-red-500">
                 <Trash2 size={15} />
               </button>
             </div>
