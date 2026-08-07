@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Home, MapPin, Star, FileText, Layers, Ruler } from 'lucide-react'
+import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark } from 'lucide-react'
 import { watchProperties } from '../lib/db.js'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
@@ -8,16 +8,17 @@ import Footer from '../components/Footer.jsx'
 export default function PublicListings() {
   const { tenantId } = useParams()
   const [properties, setProperties] = useState(null)
+  const [filter, setFilter] = useState('hamısı')
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
-  const visible = (properties || []).filter((p) => p.status !== 'passiv')
+  const active = (properties || []).filter((p) => p.status !== 'passiv')
+  const visible = filter === 'hamısı' ? active : active.filter((p) => p.dealType === filter)
   const featured = visible.filter((p) => p.featured)
   const rest = visible.filter((p) => !p.featured)
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Header */}
       <header className="border-b border-white/10 bg-gradient-to-r from-brand-900 via-slate-950 to-brand-900 px-6 py-8 text-center">
         <div className="mx-auto flex max-w-4xl items-center justify-center gap-2 text-amber-400">
           <Home size={20} />
@@ -27,15 +28,26 @@ export default function PublicListings() {
           Ən yaxşı təkliflər · Ən yaxşı qiymətlər
         </h1>
         <p className="mt-2 text-sm text-white/50">Doğru seçim, doğru ünvan</p>
+
+        <div className="mx-auto mt-6 flex max-w-xs items-center gap-1 rounded-full bg-white/5 p-1">
+          {['hamısı', 'satış', 'kirayə'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`flex-1 rounded-full py-2 text-xs font-semibold capitalize transition ${
+                filter === f ? 'bg-amber-400 text-slate-900' : 'text-white/60 hover:text-white'
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
       </header>
 
       <div className="mx-auto max-w-5xl px-4 py-10">
-        {properties === null && (
-          <p className="text-center text-white/40">Yüklənir...</p>
-        )}
-
+        {properties === null && <p className="text-center text-white/40">Yüklənir...</p>}
         {properties !== null && visible.length === 0 && (
-          <p className="text-center text-white/40">Hazırda aktiv elan yoxdur.</p>
+          <p className="text-center text-white/40">Bu kateqoriyada hazırda aktiv elan yoxdur.</p>
         )}
 
         {featured.length > 0 && (
@@ -72,7 +84,6 @@ function SectionLabel({ text }) {
 function ListingTable({ properties, tenantId, highlight }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10">
-      {/* Desktop table header */}
       <div className="hidden bg-white/5 px-5 py-3 text-[11px] font-semibold uppercase tracking-wide text-white/40 sm:grid sm:grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr]">
         <span>Ünvan</span>
         <span>Otaq</span>
@@ -94,12 +105,22 @@ function ListingTable({ properties, tenantId, highlight }) {
               {highlight && <Star size={13} className="shrink-0 text-amber-400 fill-amber-400" />}
               <MapPin size={13} className="shrink-0 text-white/30" />
               <span className="truncate">{p.title}{p.district ? ` · ${p.district}` : ''}</span>
+              {p.dealType === 'kirayə' && (
+                <span className="shrink-0 rounded-full bg-purple-400/15 px-1.5 py-0.5 text-[9px] font-semibold text-purple-300">Kirayə</span>
+              )}
+              {p.mortgage && (
+                <span className="shrink-0 flex items-center gap-0.5 rounded-full bg-blue-400/15 px-1.5 py-0.5 text-[9px] font-semibold text-blue-300">
+                  <Landmark size={9} /> İpoteka
+                </span>
+              )}
             </span>
             <span className="text-white/60 sm:text-white/70">{p.rooms ? `${p.rooms} otaq` : '—'}</span>
             <span className="flex items-center gap-1 text-white/60"><FileText size={12} />{p.documentType || '—'}</span>
             <span className="flex items-center gap-1 text-white/60"><Layers size={12} />{p.floor ? `${p.floor}/${p.floorTotal || '?'}` : '—'}</span>
             <span className="flex items-center gap-1 text-white/60"><Ruler size={12} />{p.area ? `${p.area} m²` : '—'}</span>
-            <span className="text-right font-bold text-amber-400">{Number(p.price).toLocaleString('az-AZ')} AZN</span>
+            <span className="text-right font-bold text-amber-400">
+              {Number(p.price).toLocaleString('az-AZ')} AZN{p.dealType === 'kirayə' ? '/ay' : ''}
+            </span>
           </Link>
         ))}
       </div>

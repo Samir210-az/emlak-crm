@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, MapPin, FileText, Layers, Ruler, Phone, DoorOpen } from 'lucide-react'
+import { ArrowLeft, MapPin, FileText, Layers, Ruler, Phone, DoorOpen, Landmark } from 'lucide-react'
 import { ref, db, onValue, tenantPath } from '../lib/firebase.js'
 
 export default function PropertyDetail() {
@@ -63,6 +63,18 @@ export default function PropertyDetail() {
         </div>
 
         <div className="mt-6">
+          <div className="mb-2 flex flex-wrap gap-2">
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+              property.dealType === 'kirayə' ? 'bg-purple-400/15 text-purple-300' : 'bg-emerald-400/15 text-emerald-300'
+            }`}>
+              {property.dealType === 'kirayə' ? 'Kirayə' : 'Satış'}
+            </span>
+            {property.mortgage && (
+              <span className="flex items-center gap-1 rounded-full bg-blue-400/15 px-2.5 py-1 text-[11px] font-semibold text-blue-300">
+                <Landmark size={11} /> İpoteka mümkündür
+              </span>
+            )}
+          </div>
           <h1 className="text-2xl font-bold">{property.title}</h1>
           <p className="mt-1 flex items-center gap-1.5 text-white/50">
             <MapPin size={15} /> {property.address || property.district || '—'}
@@ -81,7 +93,7 @@ export default function PropertyDetail() {
 
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
             <p className="text-2xl font-extrabold text-amber-400">
-              {Number(property.price).toLocaleString('az-AZ')} AZN
+              {Number(property.price).toLocaleString('az-AZ')} AZN{property.dealType === 'kirayə' ? ' / ay' : ''}
             </p>
             <a
               href={`https://wa.me/?text=${waMessage}`}
