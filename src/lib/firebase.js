@@ -5,13 +5,14 @@ import { getDatabase, ref, get, set, push, update, remove, onValue } from "fireb
 // tam config-ini bura yapışdır (Project Settings -> General -> Your apps -> Web app).
 // Digər proektlərdən (an-psixoloji-33442, reperitor və s.) tamamilə ayrı, müstəqil layihədir.
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyA1uY35pJ3SzWRVWAPO2mCjFyCTO6rtpag",
   authDomain: "emlak-crm-75240.firebaseapp.com",
-  databaseURL: "https://emlak-crm-75240-default-rtdb.firebaseio.com",
+  databaseURL: "https://emlak-crm-75240-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "emlak-crm-75240",
   storageBucket: "emlak-crm-75240.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  messagingSenderId: "314538863960",
+  appId: "1:314538863960:web:dbb5fe28f8094b2aba892d",
+  measurementId: "G-32TSJS9RJR",
 };
 
 export const app = initializeApp(firebaseConfig);
