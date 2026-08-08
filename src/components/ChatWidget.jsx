@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Home } from 'lucide-react'
+import { X, Send } from 'lucide-react'
 import { askAgent, extractPropertyRefs } from '../lib/ai'
 
 export default function ChatWidget({ properties = [] }) {
@@ -38,18 +38,16 @@ export default function ChatWidget({ properties = [] }) {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-20 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 text-slate-900 shadow-xl shadow-amber-400/30 transition-transform hover:scale-105 animate-float"
+        className="fixed bottom-20 right-5 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 shadow-xl shadow-amber-400/30 transition-transform hover:scale-105 animate-float"
         aria-label="AI köməkçi ilə danış"
       >
-        {open ? <X size={24} /> : <MessageCircle size={24} />}
+        {open ? <X size={26} className="text-slate-900" /> : <img src="/ai-mascot.png" alt="AI köməkçi" className="h-12 w-12 object-contain" />}
       </button>
 
       {open && (
         <div className="fixed bottom-36 right-5 z-50 flex h-[500px] w-[340px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-fade-up">
           <div className="flex items-center gap-3 bg-gradient-to-r from-slate-950 to-slate-900 px-4 py-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-400/15">
-              <Home size={18} className="text-amber-400" />
-            </div>
+            <img src="/ai-mascot.png" alt="" className="h-9 w-9 object-contain" />
             <div>
               <p className="text-sm font-semibold text-white">Əmlak AI Köməkçi</p>
               <p className="text-xs text-white/40">Adətən dərhal cavab verir</p>
