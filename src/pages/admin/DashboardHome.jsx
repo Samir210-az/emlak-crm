@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext, Link } from 'react-router-dom'
-import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet } from 'lucide-react'
+import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet, Send } from 'lucide-react'
 import { watchProperties, watchClients, watchDeals } from '../../lib/db.js'
 
 export default function DashboardHome() {
@@ -106,6 +106,9 @@ export default function DashboardHome() {
             </Link>
             <Link to="../deals" className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10">
               Sövdələşmə başlat <Plus size={15} />
+            </Link>
+            <Link to="../properties" className="flex items-center justify-between rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-300 transition hover:bg-amber-400/20">
+              Saytlara elan mətni hazırla <Send size={15} />
             </Link>
           </div>
         </div>

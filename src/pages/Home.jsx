@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Building2, MessageSquareText, ShieldCheck, Sparkles, ArrowRight, Send } from 'lucide-react'
+import { Building2, Sparkles, ArrowRight } from 'lucide-react'
 import Footer from '../components/Footer.jsx'
 import PublicBottomNav from '../components/PublicBottomNav.jsx'
 import ChatWidget from '../components/ChatWidget.jsx'
@@ -116,28 +116,6 @@ export default function HomePage() {
               </div>
             ))}
           </motion.div>
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section className="bg-white px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <p className="mb-10 text-center text-xs font-semibold uppercase tracking-widest text-brand-600">Nə təklif edirik</p>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[
-              { icon: Building2, title: 'Satış + Kirayə', text: 'Hər obyektə elan növü (satış/kirayə) və ipoteka statusu təyin edin.' },
-              { icon: MessageSquareText, title: 'AI chat + WhatsApp', text: 'Müştəri ilə söhbət edir, uyğun şəkilləri avtomatik göndərir.' },
-              { icon: Send, title: 'Bina.az-a hazır mətn', text: 'AI elan mətnini bina.az formatında yazır, bir kliklə kopyalayın.' },
-            ].map((f, i) => (
-              <div key={i} className="group rounded-2xl border border-slate-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
-                  <f.icon size={22} />
-                </div>
-                <h3 className="font-semibold text-slate-800">{f.title}</h3>
-                <p className="mt-1.5 text-sm text-slate-500">{f.text}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
