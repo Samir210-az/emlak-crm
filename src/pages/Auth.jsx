@@ -104,7 +104,7 @@ export default function Auth() {
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Building2 size={18} />
           </span>
-          Əmlak CRM
+          ƏMLAK CRM
         </Link>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur-xl">

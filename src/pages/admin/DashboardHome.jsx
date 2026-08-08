@@ -34,7 +34,7 @@ export default function DashboardHome() {
   const publicUrl = `${window.location.origin}/elanlar/${tenantId}`
 
   return (
-    <div className="min-h-full bg-slate-950 p-6 sm:p-8">
+    <div className="min-h-full overflow-x-hidden bg-slate-950 p-6 sm:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Xoş gəldin 👋</h1>
         <p className="text-sm text-white/40">Agentliyinin bugünkü icmalı</p>
@@ -53,14 +53,14 @@ export default function DashboardHome() {
       </div>
 
       {/* AI Köməkçi status */}
-      <div className="mt-6 flex flex-wrap items-center gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/15 text-amber-400">
+      <div className="mt-6 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-400/15 text-amber-400">
           <Sparkles size={20} />
         </div>
-        <div className="flex-1 min-w-[200px]">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-white">AI Köməkçi — ictimai elan səhifəndə aktivdir</p>
-          <p className="mt-0.5 text-xs text-white/50">
-            Müştərilər <code className="rounded bg-white/10 px-1.5 py-0.5">{publicUrl}</code> ünvanında sağ-alt küncdəki
+          <p className="mt-0.5 break-words text-xs text-white/50">
+            Müştərilər <code className="break-all rounded bg-white/10 px-1.5 py-0.5">{publicUrl}</code> ünvanında sağ-alt küncdəki
             💬 düyməsindən AI ilə danışıb obyekt axtara bilər.
           </p>
         </div>

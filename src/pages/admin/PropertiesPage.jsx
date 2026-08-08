@@ -8,7 +8,7 @@ import { sampleProperties } from '../../lib/seedData.js'
 const emptyForm = {
   title: '', district: '', address: '', rooms: '', floor: '', floorTotal: '',
   area: '', documentType: 'çıxarış', dealType: 'satış', mortgage: false,
-  price: '', images: '', description: '', status: 'aktiv', featured: false,
+  price: '', ownerPhone: '', images: '', description: '', status: 'aktiv', featured: false,
 }
 
 const inputCls = 'rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-amber-400/50'
@@ -162,6 +162,8 @@ export default function PropertiesPage() {
           </select>
           <input placeholder={form.dealType === 'kirayə' ? 'Aylıq qiymət (AZN)' : 'Qiymət (AZN)'} type="number" value={form.price}
             onChange={(e) => setForm({ ...form, price: e.target.value })} className={inputCls} required />
+          <input placeholder="Mülk sahibinin telefonu" type="tel" value={form.ownerPhone}
+            onChange={(e) => setForm({ ...form, ownerPhone: e.target.value })} className={`${inputCls} sm:col-span-2`} />
 
           {form.dealType === 'satış' && (
             <label className="flex items-center gap-2 text-sm text-white/60 sm:col-span-2">
@@ -226,20 +228,18 @@ export default function PropertiesPage() {
               <p className="mt-2 text-sm font-semibold text-amber-400">
                 {p.price} AZN{p.dealType === 'kirayə' ? ' / ay' : ''}
               </p>
-              <div className="mt-2 flex items-center gap-3">
-                <button
-                  onClick={() => updateProperty(tenantId, p.id, { featured: !p.featured })}
-                  className="text-xs text-white/40 hover:text-amber-400"
-                >
-                  {p.featured ? 'Önə çıxarmadan sil' : 'Günün mənzili et'}
-                </button>
-                <button
-                  onClick={() => openBinaModal(p)}
-                  className="flex items-center gap-1 text-xs font-medium text-amber-400 hover:text-amber-300"
-                >
-                  <Send size={11} /> Elan mətni
-                </button>
-              </div>
+              <button
+                onClick={() => openBinaModal(p)}
+                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 py-2 text-xs font-semibold text-amber-400 transition hover:bg-amber-400/20"
+              >
+                <Send size={12} /> Saytlara elan mətni hazırla (Bina.az / Tap.az / Arenda.az)
+              </button>
+              <button
+                onClick={() => updateProperty(tenantId, p.id, { featured: !p.featured })}
+                className="mt-2 text-xs text-white/40 hover:text-amber-400"
+              >
+                {p.featured ? 'Önə çıxarmadan sil' : 'Günün mənzili et'}
+              </button>
             </div>
           </div>
         ))}

@@ -39,7 +39,7 @@ export default function PropertyDetail() {
             <ArrowLeft size={15} /> Bütün elanlara qayıt
           </Link>
           <Link to="/" className="flex items-center gap-1.5 text-xs font-medium text-white/40 hover:text-white">
-            <HomeIcon size={13} /> Əmlak CRM
+            <HomeIcon size={13} /> ƏMLAK CRM
           </Link>
         </div>
 
@@ -101,14 +101,24 @@ export default function PropertyDetail() {
             <p className="text-2xl font-extrabold text-amber-400">
               {Number(property.price).toLocaleString('az-AZ')} AZN{property.dealType === 'kirayə' ? ' / ay' : ''}
             </p>
-            <a
-              href={`https://wa.me/?text=${waMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-amber-300"
-            >
-              <Phone size={15} /> Əlaqə saxla
-            </a>
+            <div className="flex gap-2">
+              {property.ownerPhone && (
+                <a
+                  href={`tel:${property.ownerPhone.replace(/\s+/g, '')}`}
+                  className="flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/5"
+                >
+                  <Phone size={15} /> Zəng et
+                </a>
+              )}
+              <a
+                href={`https://wa.me/${property.ownerPhone ? property.ownerPhone.replace(/[^\d]/g, '') : ''}?text=${waMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-amber-300"
+              >
+                <Phone size={15} /> Əlaqə saxla
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function HomePage() {
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Building2 size={16} />
           </span>
-          Əmlak CRM
+          ƏMLAK CRM
         </span>
         <Link to="/giris" className="text-sm font-medium text-white/70 transition hover:text-white">
           Daxil ol

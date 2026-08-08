@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import { Building2, Users, Handshake, LogOut, Home, Lock, LayoutDashboard } from "lucide-react";
 import { getSession, clearSession } from "../lib/session.js";
 import { watchProfil } from "../lib/db.js";
@@ -44,12 +44,12 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-slate-950 sm:flex">
       {/* Mobile top bar */}
       <div className="flex items-center justify-between border-b border-white/10 bg-slate-950 px-4 py-3 sm:hidden">
-        <span className="flex items-center gap-2 font-semibold text-white">
+        <Link to="/" className="flex items-center gap-2 font-semibold text-white">
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Home size={15} />
           </span>
-          Əmlak CRM
-        </span>
+          ƏMLAK CRM
+        </Link>
         {profil?.plan === "sınaq" && daysLeft !== null && (
           <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-400">
             {daysLeft} gün qalıb
@@ -59,12 +59,12 @@ export default function AdminLayout() {
 
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-white/10 bg-slate-950 sm:flex">
-        <div className="flex items-center gap-2 px-5 py-5">
+        <Link to="/" className="flex items-center gap-2 px-5 py-5">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Home size={16} />
           </span>
-          <span className="font-semibold text-white">Əmlak CRM</span>
-        </div>
+          <span className="font-semibold text-white">ƏMLAK CRM</span>
+        </Link>
         {profil?.plan === "sınaq" && daysLeft !== null && (
           <div className="mx-3 mb-3 rounded-lg bg-amber-400/10 px-3 py-2 text-xs text-amber-400">
             Sınaq müddəti: {daysLeft} gün qalıb
@@ -125,7 +125,7 @@ export default function AdminLayout() {
 }
 
 function TrialExpired({ ad, onLogout }) {
-  const waMessage = encodeURIComponent(`Salam, mən ${ad || "əmlak agenti"}. Əmlak CRM sınaq müddətim bitib, abunə olmaq istəyirəm.`);
+  const waMessage = encodeURIComponent(`Salam, mən ${ad || "əmlak agenti"}. ƏMLAK CRM sınaq müddətim bitib, abunə olmaq istəyirəm.`);
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-16">
       <div className="relative z-10 w-full max-w-md text-center">
