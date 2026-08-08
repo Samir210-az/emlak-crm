@@ -38,11 +38,18 @@ export default function ChatWidget({ properties = [] }) {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-20 right-5 z-50 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 shadow-2xl shadow-amber-400/40 transition-transform hover:scale-110 animate-float"
+        className="fixed bottom-20 right-4 z-50 flex h-24 w-24 items-center justify-center transition-transform hover:scale-110 animate-float"
         aria-label="AI köməkçi ilə danış"
       >
-        {!open && <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-amber-400/50" />}
-        {open ? <X size={30} className="text-slate-900" /> : <img src="/ai-mascot.png" alt="AI köməkçi" className="h-16 w-16 object-contain" />}
+        {!open && <span className="absolute inset-2 -z-10 animate-ping rounded-full bg-amber-400/40" />}
+        {!open && <span className="absolute inset-3 -z-10 rounded-full bg-amber-400/20 blur-xl" />}
+        {open ? (
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-400 shadow-2xl">
+            <X size={28} className="text-slate-900" />
+          </span>
+        ) : (
+          <img src="/ai-mascot.png" alt="AI köməkçi" className="h-24 w-24 object-contain drop-shadow-2xl" />
+        )}
       </button>
 
       {open && (

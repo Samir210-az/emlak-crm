@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext, Link } from 'react-router-dom'
-import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet, Sparkles, MessageCircle } from 'lucide-react'
+import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet } from 'lucide-react'
 import { watchProperties, watchClients, watchDeals } from '../../lib/db.js'
 
 export default function DashboardHome() {
@@ -31,7 +31,6 @@ export default function DashboardHome() {
   ]
 
   const recentProps = [...properties].slice(0, 4)
-  const publicUrl = `${window.location.origin}/elanlar/${tenantId}`
 
   return (
     <div className="min-h-full overflow-x-hidden bg-slate-950 p-6 sm:p-8">
@@ -52,27 +51,7 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      {/* AI Köməkçi status */}
-      <div className="mt-6 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-400/15 text-amber-400">
-          <Sparkles size={20} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white">AI Köməkçi — ictimai elan səhifəndə aktivdir</p>
-          <p className="mt-0.5 break-words text-xs text-white/50">
-            Müştərilər <code className="break-all rounded bg-white/10 px-1.5 py-0.5">{publicUrl}</code> ünvanında sağ-alt küncdəki
-            💬 düyməsindən AI ilə danışıb obyekt axtara bilər.
-          </p>
-        </div>
-        <a
-          href={publicUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-300"
-        >
-          <MessageCircle size={13} /> AI-nı sına
-        </a>
-      </div>
+      {/* AI Köməkçi status kartı çıxarıldı — artıq lazımsız, AI mövcud və işlək */}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur lg:col-span-2">
