@@ -96,8 +96,8 @@ export default function HomePage() {
           >
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-widest text-amber-400/80">Günün mənzilləri</span>
-              <span className="flex items-center gap-1 text-[10px] text-emerald-400">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> canlı
+              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/40">
+                Nümunə
               </span>
             </div>
             {demoListings.map((l, i) => (
