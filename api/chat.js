@@ -1,15 +1,14 @@
 // Vercel Serverless Function — Groq API-yə təhlükəsiz proxy.
 // GROQ_API_KEY Vercel Environment Variables-də saxlanmalıdır (frontend-də yox!).
-// Vercel Dashboard -> Project Settings -> Environment Variables -> GROQ_API_KEY
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Yalnız POST icazəlidir' })
   }
 
-  try {
-    const { messages } = req.body
+  const { messages } = req.body
 
+  async function callGroq() {
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -23,16 +22,28 @@ export default async function handler(req, res) {
         max_tokens: 400,
       }),
     })
-
     if (!groqRes.ok) {
       const errText = await groqRes.text()
-      return res.status(502).json({ error: 'Groq xətası', detail: errText })
+      const err = new Error(errText)
+      err.status = groqRes.status
+      throw err
     }
+    return groqRes.json()
+  }
 
-    const data = await groqRes.json()
+  try {
+    let data
+    try {
+      data = await callGroq()
+    } catch (firstErr) {
+      // Keçici rate-limit/network xətaları üçün bir dəfə təkrar cəhd
+      await new Promise((r) => setTimeout(r, 700))
+      data = await callGroq()
+    }
     const reply = data.choices?.[0]?.message?.content || 'Üzr istəyirəm, cavab tapa bilmədim.'
     return res.status(200).json({ reply })
   } catch (err) {
-    return res.status(500).json({ error: err.message })
+    console.error('Groq xətası:', err.status, err.message)
+    return res.status(502).json({ error: 'Groq xətası', detail: err.message, status: err.status })
   }
 }
