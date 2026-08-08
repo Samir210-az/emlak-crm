@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom'
 import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2, Search } from 'lucide-react'
 import { watchProperties, addProperty, deleteProperty, updateProperty } from '../../lib/db.js'
 import { generateListingText, LISTING_PLATFORMS } from '../../lib/listingText.js'
+import { sampleProperties } from '../../lib/seedData.js'
 
 const emptyForm = {
   title: '', district: '', address: '', rooms: '', floor: '', floorTotal: '',
@@ -18,6 +19,18 @@ export default function PropertiesPage() {
   const [copied, setCopied] = useState(false)
   const [binaModal, setBinaModal] = useState(null)
   const [query, setQuery] = useState('')
+  const [seeding, setSeeding] = useState(false)
+
+  async function loadSampleData() {
+    setSeeding(true)
+    try {
+      for (const p of sampleProperties) {
+        await addProperty(tenantId, p)
+      }
+    } finally {
+      setSeeding(false)
+    }
+  }
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
@@ -72,6 +85,16 @@ export default function PropertiesPage() {
           <Plus size={16} /> Yeni obyekt
         </button>
       </div>
+
+      {properties.length === 0 && (
+        <button
+          onClick={loadSampleData}
+          disabled={seeding}
+          className="mb-4 w-full rounded-xl border border-dashed border-amber-300 bg-amber-50 py-3 text-sm font-medium text-amber-700 transition hover:bg-amber-100 disabled:opacity-60"
+        >
+          {seeding ? 'Yüklənir...' : '✨ Nümunə elanlar yüklə (5 real görünüşlü elan)'}
+        </button>
+      )}
 
       <div className="mb-4 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5">
         <Search size={16} className="text-slate-400" />
