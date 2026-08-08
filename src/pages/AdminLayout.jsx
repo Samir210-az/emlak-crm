@@ -35,9 +35,27 @@ export default function AdminLayout() {
 
   const daysLeft = profil?.access_until ? Math.max(0, Math.ceil((profil.access_until - Date.now()) / 86400000)) : null;
 
+  function handleLogout() {
+    clearSession();
+    navigate("/giris");
+  }
+
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <aside className="flex w-60 flex-col border-r border-slate-200 bg-white">
+    <div className="min-h-screen bg-slate-50 sm:flex">
+      {/* Mobile top bar */}
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:hidden">
+        <span className="flex items-center gap-2 font-semibold text-slate-800">
+          <Home size={18} className="text-brand-600" /> Əmlak CRM
+        </span>
+        {profil?.plan === "sınaq" && daysLeft !== null && (
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
+            {daysLeft} gün qalıb
+          </span>
+        )}
+      </div>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-white sm:flex">
         <div className="flex items-center gap-2 px-5 py-5">
           <Home size={20} className="text-brand-600" />
           <span className="font-semibold text-slate-800">Əmlak CRM</span>
@@ -64,15 +82,39 @@ export default function AdminLayout() {
           ))}
         </nav>
         <button
-          onClick={() => { clearSession(); navigate("/giris"); }}
+          onClick={handleLogout}
           className="mx-3 mb-5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50"
         >
           <LogOut size={17} /> Çıxış
         </button>
       </aside>
-      <main className="flex-1 overflow-y-auto">
+
+      {/* Main content */}
+      <main className="min-w-0 flex-1 overflow-x-hidden pb-20 sm:pb-0">
         <Outlet context={{ uid: session.tenantId }} />
       </main>
+
+      {/* Mobile bottom nav */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white sm:hidden">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium ${
+                isActive ? "text-brand-600" : "text-slate-400"
+              }`
+            }
+          >
+            <item.icon size={19} />
+            {item.label}
+          </NavLink>
+        ))}
+        <button onClick={handleLogout} className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-slate-400">
+          <LogOut size={19} />
+          Çıxış
+        </button>
+      </nav>
     </div>
   );
 }
