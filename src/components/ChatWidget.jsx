@@ -135,15 +135,24 @@ export default function ChatWidget({ properties = [], tenantId = null, demoMode 
                   )}
                   {m.properties?.length > 0 && (
                     <div className="mt-2 space-y-2">
-                      {m.properties.map((p) => (
-                        <div key={p.id} className="overflow-hidden rounded-lg border border-white/10 bg-white/5">
-                          {p.images?.[0] && <img src={p.images[0]} alt={p.title} className="h-28 w-full object-cover" />}
-                          <div className="p-2">
-                            <p className="text-xs font-semibold text-white">{p.title}</p>
-                            <p className="text-xs font-medium text-amber-400">{p.price} AZN</p>
+                      {m.properties.map((p) => {
+                        const card = (
+                          <div className="overflow-hidden rounded-lg border border-white/10 bg-white/5 transition hover:border-amber-400/40">
+                            {p.images?.[0] && <img src={p.images[0]} alt={p.title} className="h-28 w-full object-cover" />}
+                            <div className="p-2">
+                              <p className="text-xs font-semibold text-white">{p.title}</p>
+                              <p className="text-xs font-medium text-amber-400">{p.price} AZN</p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                        return tenantId ? (
+                          <Link key={p.id} to={`/elanlar/${tenantId}/${p.id}`} onClick={() => setOpen(false)}>
+                            {card}
+                          </Link>
+                        ) : (
+                          <div key={p.id}>{card}</div>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
