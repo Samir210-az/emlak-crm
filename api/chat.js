@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages,
         temperature: 0.6,
         max_tokens: 400,

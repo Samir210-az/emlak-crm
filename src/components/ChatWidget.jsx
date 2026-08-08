@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { X, Send, Phone, UserPlus } from 'lucide-react'
 import { askAgent, extractPropertyRefs } from '../lib/ai'
 import { addClient } from '../lib/db.js'
 
-export default function ChatWidget({ properties = [], tenantId = null }) {
+export default function ChatWidget({ properties = [], tenantId = null, demoMode = false }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Salam! 👋 Sizə uyğun ev/mənzil tapmaqda kömək edə bilərəm. Satış, yoxsa kirayə axtarırsınız?' },
@@ -26,6 +27,19 @@ export default function ChatWidget({ properties = [], tenantId = null }) {
     const next = [...messages, userMsg]
     setMessages(next)
     setInput('')
+
+    if (demoMode) {
+      setMessages((m) => [
+        ...m,
+        {
+          role: 'assistant',
+          content: 'Bu, Əmlak CRM-in demo AI köməkçisidir. Öz agentliyiniz üçün canlı, real elanlarla işləyən AI-yə çıxış üçün qeydiyyatdan keçin — 7 gün pulsuz sınaq var 👇',
+          cta: true,
+        },
+      ])
+      return
+    }
+
     setLoading(true)
     try {
       const raw = await askAgent(next, properties)
@@ -108,6 +122,16 @@ export default function ChatWidget({ properties = [], tenantId = null }) {
                   }`}
                 >
                   {m.content}
+                  {m.cta && (
+                    <div className="mt-2 flex gap-2">
+                      <Link to="/qeydiyyat" className="flex-1 rounded-lg bg-amber-400 py-2 text-center text-xs font-semibold text-slate-900 hover:bg-amber-300">
+                        Qeydiyyatdan keç
+                      </Link>
+                      <Link to="/giris" className="flex-1 rounded-lg border border-white/15 py-2 text-center text-xs font-semibold text-white hover:bg-white/5">
+                        Daxil ol
+                      </Link>
+                    </div>
+                  )}
                   {m.properties?.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {m.properties.map((p) => (

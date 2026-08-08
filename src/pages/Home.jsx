@@ -120,7 +120,7 @@ export default function HomePage() {
       </section>
 
       <Footer />
-      <ChatWidget properties={demoProperties} />
+      <ChatWidget properties={demoProperties} demoMode />
       <PublicBottomNav />
     </div>
   )
