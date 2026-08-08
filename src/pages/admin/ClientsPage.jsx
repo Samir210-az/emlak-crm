@@ -22,7 +22,7 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="min-h-full bg-slate-50 p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-800">Müştərilər</h1>

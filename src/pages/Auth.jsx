@@ -4,6 +4,7 @@ import { Building2, ArrowRight, Loader2 } from "lucide-react";
 import { db, ref, set, get, tenantPath } from "../lib/firebase.js";
 import { saveSession, slugify } from "../lib/session.js";
 
+const HERO_IMG = "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1800&q=80";
 const cleanPhone = (p) => p.replace(/[^\d]/g, "");
 
 export default function Auth() {
@@ -90,32 +91,36 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-900 via-brand-600 to-brand-400 animate-gradient flex items-center justify-center px-4 py-16 relative overflow-hidden">
-      <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-white/10 blur-3xl animate-float" />
-      <div className="absolute bottom-0 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl animate-float" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16">
+      <div className="absolute inset-0">
+        <img src={HERO_IMG} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/85 to-slate-950" />
+      </div>
+      <div className="absolute top-1/4 -left-20 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl animate-float" />
+      <div className="absolute bottom-0 -right-20 h-80 w-80 rounded-full bg-amber-400/10 blur-3xl animate-float" />
 
       <div className="relative z-10 w-full max-w-md animate-fade-up">
-        <Link to="/" className="flex items-center gap-2 justify-center mb-8 text-white font-semibold text-xl">
-          <span className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-brand-700">
+        <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-xl font-semibold text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Building2 size={18} />
           </span>
           Əmlak CRM
         </Link>
 
-        <div className="bg-white/[0.08] backdrop-blur-xl border border-white/15 rounded-3xl p-8 shadow-2xl">
-          <div className="flex gap-2 mb-7 bg-white/10 rounded-full p-1">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur-xl">
+          <div className="mb-7 flex gap-2 rounded-full bg-white/5 p-1">
             <Link
               to="/qeydiyyat"
-              className={`flex-1 text-center text-sm font-medium py-2.5 rounded-full transition-all ${
-                isRegister ? "bg-white text-brand-700" : "text-white/70 hover:text-white"
+              className={`flex-1 rounded-full py-2.5 text-center text-sm font-medium transition-all ${
+                isRegister ? "bg-amber-400 text-slate-900" : "text-white/60 hover:text-white"
               }`}
             >
               Qeydiyyat
             </Link>
             <Link
               to="/giris"
-              className={`flex-1 text-center text-sm font-medium py-2.5 rounded-full transition-all ${
-                !isRegister ? "bg-white text-brand-700" : "text-white/70 hover:text-white"
+              className={`flex-1 rounded-full py-2.5 text-center text-sm font-medium transition-all ${
+                !isRegister ? "bg-amber-400 text-slate-900" : "text-white/60 hover:text-white"
               }`}
             >
               Daxil ol
@@ -139,12 +144,12 @@ export default function Auth() {
               maxLength={8}
             />
 
-            {error && <p className="text-red-100 text-sm bg-red-500/20 rounded-lg px-3 py-2">{error}</p>}
+            {error && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-white text-brand-700 font-semibold rounded-xl py-3 mt-2 transition hover:bg-brand-50 disabled:opacity-60"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 py-3 font-semibold text-slate-900 transition hover:bg-amber-300 disabled:opacity-60"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : (
                 <>{isRegister ? "Hesab yarat (7 gün pulsuz)" : "Daxil ol"} <ArrowRight size={16} /></>
@@ -152,7 +157,7 @@ export default function Auth() {
             </button>
           </form>
         </div>
-        <p className="text-center text-white/50 text-xs mt-6">
+        <p className="mt-6 text-center text-xs text-white/40">
           Məlumatların tam ayrı və qorunur — heç kim başqasının panelini görə bilməz.
         </p>
       </div>
@@ -163,14 +168,14 @@ export default function Auth() {
 function Field({ label, value, onChange, placeholder, type = "text", maxLength }) {
   return (
     <label className="block">
-      <span className="text-xs font-medium text-white/60 mb-1.5 block">{label}</span>
+      <span className="mb-1.5 block text-xs font-medium text-white/50">{label}</span>
       <input
         type={type}
         value={value}
         maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-white/35 focus:outline-none focus:border-white/50 focus:bg-white/[0.15] transition-all"
+        className="w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-white placeholder:text-white/30 transition-all focus:border-amber-400/50 focus:bg-white/[0.09] focus:outline-none"
       />
     </label>
   );

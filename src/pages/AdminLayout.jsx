@@ -27,7 +27,7 @@ export default function AdminLayout() {
 
   if (!session) return null;
   if (profil === undefined) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-400">Yüklənir...</div>;
+    return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white/40">Yüklənir...</div>;
   }
 
   const expired = profil && profil.access_until && Date.now() > profil.access_until;
@@ -41,27 +41,32 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 sm:flex">
+    <div className="min-h-screen bg-slate-950 sm:flex">
       {/* Mobile top bar */}
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:hidden">
-        <span className="flex items-center gap-2 font-semibold text-slate-800">
-          <Home size={18} className="text-brand-600" /> Əmlak CRM
+      <div className="flex items-center justify-between border-b border-white/10 bg-slate-950 px-4 py-3 sm:hidden">
+        <span className="flex items-center gap-2 font-semibold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-slate-900">
+            <Home size={15} />
+          </span>
+          Əmlak CRM
         </span>
         {profil?.plan === "sınaq" && daysLeft !== null && (
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
+          <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-400">
             {daysLeft} gün qalıb
           </span>
         )}
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-white sm:flex">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-white/10 bg-slate-950 sm:flex">
         <div className="flex items-center gap-2 px-5 py-5">
-          <Home size={20} className="text-brand-600" />
-          <span className="font-semibold text-slate-800">Əmlak CRM</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
+            <Home size={16} />
+          </span>
+          <span className="font-semibold text-white">Əmlak CRM</span>
         </div>
         {profil?.plan === "sınaq" && daysLeft !== null && (
-          <div className="mx-3 mb-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+          <div className="mx-3 mb-3 rounded-lg bg-amber-400/10 px-3 py-2 text-xs text-amber-400">
             Sınaq müddəti: {daysLeft} gün qalıb
           </div>
         )}
@@ -72,7 +77,7 @@ export default function AdminLayout() {
               to={item.to}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  isActive ? "bg-brand-50 text-brand-700" : "text-slate-600 hover:bg-slate-50"
+                  isActive ? "bg-amber-400/10 text-amber-400" : "text-white/50 hover:bg-white/5 hover:text-white"
                 }`
               }
             >
@@ -83,7 +88,7 @@ export default function AdminLayout() {
         </nav>
         <button
           onClick={handleLogout}
-          className="mx-3 mb-5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50"
+          className="mx-3 mb-5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/40 transition hover:bg-white/5 hover:text-white"
         >
           <LogOut size={17} /> Çıxış
         </button>
@@ -95,14 +100,14 @@ export default function AdminLayout() {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-slate-950 sm:hidden">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
               `flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium ${
-                isActive ? "text-brand-600" : "text-slate-400"
+                isActive ? "text-amber-400" : "text-white/40"
               }`
             }
           >
@@ -110,7 +115,7 @@ export default function AdminLayout() {
             {item.label}
           </NavLink>
         ))}
-        <button onClick={handleLogout} className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-slate-400">
+        <button onClick={handleLogout} className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-white/40">
           <LogOut size={19} />
           Çıxış
         </button>
@@ -122,13 +127,13 @@ export default function AdminLayout() {
 function TrialExpired({ ad, onLogout }) {
   const waMessage = encodeURIComponent(`Salam, mən ${ad || "əmlak agenti"}. Əmlak CRM sınaq müddətim bitib, abunə olmaq istəyirəm.`);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-900 via-brand-600 to-brand-400 animate-gradient flex items-center justify-center px-4 py-16">
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-16">
       <div className="relative z-10 w-full max-w-md text-center">
-        <div className="w-16 h-16 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center mx-auto mb-6">
-          <Lock className="text-white" size={26} />
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-amber-400/20 bg-amber-400/10">
+          <Lock className="text-amber-400" size={26} />
         </div>
-        <h1 className="text-2xl font-semibold text-white mb-3">Sınaq müddətin bitib</h1>
-        <p className="text-white/70 text-sm mb-8 leading-relaxed">
+        <h1 className="mb-3 text-2xl font-semibold text-white">Sınaq müddətin bitib</h1>
+        <p className="mb-8 text-sm leading-relaxed text-white/50">
           {ad ? `${ad}, ` : ""}7 günlük pulsuz sınaq müddətin başa çatıb. Davam etmək üçün abunə ol —
           obyektlərinin, müştərilərinin və sövdələşmələrinin bütün datası qorunub saxlanılır.
         </p>
@@ -136,11 +141,11 @@ function TrialExpired({ ad, onLogout }) {
           href={`https://wa.me/994552107111?text=${waMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full rounded-xl bg-white py-3 text-sm font-semibold text-brand-700 mb-3 transition hover:bg-brand-50"
+          className="mb-3 block w-full rounded-xl bg-amber-400 py-3 text-sm font-semibold text-slate-900 transition hover:bg-amber-300"
         >
           WhatsApp ilə əlaqə saxla
         </a>
-        <button onClick={onLogout} className="text-white/60 hover:text-white text-sm transition-colors">
+        <button onClick={onLogout} className="text-sm text-white/40 transition-colors hover:text-white">
           Çıxış et
         </button>
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext, Link } from 'react-router-dom'
-import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet } from 'lucide-react'
+import { Building2, Users, Handshake, TrendingUp, Plus, MapPin, ArrowRight, Wallet, Sparkles, MessageCircle } from 'lucide-react'
 import { watchProperties, watchClients, watchDeals } from '../../lib/db.js'
 
 export default function DashboardHome() {
@@ -24,38 +24,61 @@ export default function DashboardHome() {
   const monthRevenue = closedThisMonth.reduce((sum, d) => sum + (Number(d.commission) || 0), 0)
 
   const kpis = [
-    { label: 'Aktiv elanlar', value: activeProps.length, icon: Building2, color: 'text-brand-600 bg-brand-50' },
-    { label: 'Müştərilər', value: clients.length, icon: Users, color: 'text-purple-600 bg-purple-50' },
-    { label: 'Açıq sövdələşmələr', value: openDeals.length, icon: Handshake, color: 'text-amber-600 bg-amber-50' },
-    { label: 'Bu ay komissiya', value: `${monthRevenue.toLocaleString('az-AZ')} AZN`, icon: Wallet, color: 'text-emerald-600 bg-emerald-50' },
+    { label: 'Aktiv elanlar', value: activeProps.length, icon: Building2 },
+    { label: 'Müştərilər', value: clients.length, icon: Users },
+    { label: 'Açıq sövdələşmələr', value: openDeals.length, icon: Handshake },
+    { label: 'Bu ay komissiya', value: `${monthRevenue.toLocaleString('az-AZ')} AZN`, icon: Wallet },
   ]
 
   const recentProps = [...properties].slice(0, 4)
+  const publicUrl = `${window.location.origin}/elanlar/${tenantId}`
 
   return (
-    <div className="p-6 sm:p-8">
+    <div className="min-h-full bg-slate-950 p-6 sm:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Xoş gəldin 👋</h1>
-        <p className="text-sm text-slate-500">Agentliyinin bugünkü icmalı</p>
+        <h1 className="text-2xl font-bold text-white">Xoş gəldin 👋</h1>
+        <p className="text-sm text-white/40">Agentliyinin bugünkü icmalı</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {kpis.map((k, i) => (
-          <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${k.color}`}>
+          <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400">
               <k.icon size={19} />
             </div>
-            <p className="text-2xl font-bold text-slate-800">{k.value}</p>
-            <p className="mt-0.5 text-xs text-slate-500">{k.label}</p>
+            <p className="text-2xl font-bold text-amber-400">{k.value}</p>
+            <p className="mt-0.5 text-xs text-white/40">{k.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      {/* AI Köməkçi status */}
+      <div className="mt-6 flex flex-wrap items-center gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/15 text-amber-400">
+          <Sparkles size={20} />
+        </div>
+        <div className="flex-1 min-w-[200px]">
+          <p className="text-sm font-semibold text-white">AI Köməkçi — ictimai elan səhifəndə aktivdir</p>
+          <p className="mt-0.5 text-xs text-white/50">
+            Müştərilər <code className="rounded bg-white/10 px-1.5 py-0.5">{publicUrl}</code> ünvanında sağ-alt küncdəki
+            💬 düyməsindən AI ilə danışıb obyekt axtara bilər.
+          </p>
+        </div>
+        <a
+          href={publicUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-300"
+        >
+          <MessageCircle size={13} /> AI-nı sına
+        </a>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold text-slate-800">Son əlavə olunan obyektlər</h2>
-            <Link to="../properties" className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-800">
+            <h2 className="font-semibold text-white">Son əlavə olunan obyektlər</h2>
+            <Link to="../properties" className="flex items-center gap-1 text-xs font-medium text-amber-400 hover:text-amber-300">
               Hamısı <ArrowRight size={12} />
             </Link>
           </div>
@@ -70,39 +93,39 @@ export default function DashboardHome() {
           ) : (
             <div className="space-y-3">
               {recentProps.map((p) => (
-                <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3">
+                <div key={p.id} className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3">
                   {p.images?.[0] ? (
                     <img src={p.images[0]} alt="" className="h-12 w-12 rounded-lg object-cover" />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 text-slate-300">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 text-white/20">
                       <Building2 size={18} />
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-800">{p.title}</p>
-                    <p className="flex items-center gap-1 text-xs text-slate-400">
+                    <p className="truncate text-sm font-medium text-white">{p.title}</p>
+                    <p className="flex items-center gap-1 text-xs text-white/40">
                       <MapPin size={11} /> {p.district || '—'}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-brand-600">{p.price} AZN</p>
+                  <p className="text-sm font-semibold text-amber-400">{p.price} AZN</p>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-sm">
+        <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-amber-400/10 to-transparent p-6 backdrop-blur">
           <TrendingUp size={20} className="mb-3 text-amber-400" />
-          <h2 className="font-semibold">Sürətli hərəkətlər</h2>
-          <p className="mt-1 text-xs text-white/50">Ən çox istifadə olunan addımlar</p>
+          <h2 className="font-semibold text-white">Sürətli hərəkətlər</h2>
+          <p className="mt-1 text-xs text-white/40">Ən çox istifadə olunan addımlar</p>
           <div className="mt-4 space-y-2">
-            <Link to="../properties" className="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3 text-sm transition hover:bg-white/15">
+            <Link to="../properties" className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10">
               Yeni obyekt əlavə et <Plus size={15} />
             </Link>
-            <Link to="../clients" className="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3 text-sm transition hover:bg-white/15">
+            <Link to="../clients" className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10">
               Yeni müştəri qeyd et <Plus size={15} />
             </Link>
-            <Link to="../deals" className="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3 text-sm transition hover:bg-white/15">
+            <Link to="../deals" className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10">
               Sövdələşmə başlat <Plus size={15} />
             </Link>
           </div>
@@ -114,13 +137,13 @@ export default function DashboardHome() {
 
 function EmptyState({ icon: Icon, title, text, cta, to }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 py-10 text-center">
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-slate-300">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 py-10 text-center">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-white/20">
         <Icon size={22} />
       </div>
-      <p className="text-sm font-medium text-slate-700">{title}</p>
-      <p className="mt-1 max-w-xs text-xs text-slate-400">{text}</p>
-      <Link to={to} className="mt-4 rounded-full bg-brand-600 px-4 py-2 text-xs font-medium text-white hover:bg-brand-700">
+      <p className="text-sm font-medium text-white/80">{title}</p>
+      <p className="mt-1 max-w-xs text-xs text-white/40">{text}</p>
+      <Link to={to} className="mt-4 rounded-full bg-amber-400 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-300">
         {cta}
       </Link>
     </div>

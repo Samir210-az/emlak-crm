@@ -38,7 +38,7 @@ export default function DealsPage() {
   const totalPipeline = deals.filter((d) => d.stage !== 'bitib').reduce((s, d) => s + (Number(d.amount) || 0), 0)
 
   return (
-    <div className="p-6 sm:p-8">
+    <div className="min-h-full bg-slate-50 p-6 sm:p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-slate-800">Sövdələşmə boru xətti</h1>

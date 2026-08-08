@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2 } from 'lucide-react'
+import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2, Search } from 'lucide-react'
 import { watchProperties, addProperty, deleteProperty, updateProperty } from '../../lib/db.js'
 import { generateListingText, LISTING_PLATFORMS } from '../../lib/listingText.js'
 
@@ -17,8 +17,15 @@ export default function PropertiesPage() {
   const [showForm, setShowForm] = useState(false)
   const [copied, setCopied] = useState(false)
   const [binaModal, setBinaModal] = useState(null)
+  const [query, setQuery] = useState('')
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
+
+  const filtered = properties.filter((p) => {
+    if (!query.trim()) return true
+    const q = query.toLowerCase()
+    return (p.title || '').toLowerCase().includes(q) || (p.district || '').toLowerCase().includes(q) || (p.address || '').toLowerCase().includes(q)
+  })
 
   const publicUrl = `${window.location.origin}/elanlar/${tenantId}`
 
@@ -52,7 +59,7 @@ export default function PropertiesPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="min-h-full bg-slate-50 p-8">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-800">Obyektlər</h1>
@@ -64,6 +71,16 @@ export default function PropertiesPage() {
         >
           <Plus size={16} /> Yeni obyekt
         </button>
+      </div>
+
+      <div className="mb-4 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5">
+        <Search size={16} className="text-slate-400" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Başlıq, rayon və ya ünvana görə axtar..."
+          className="w-full text-sm outline-none"
+        />
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3">
@@ -154,7 +171,7 @@ export default function PropertiesPage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {properties.map((p) => (
+        {filtered.map((p) => (
           <div key={p.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             {p.images?.[0] ? (
               <img src={p.images[0]} alt={p.title} className="h-36 w-full object-cover" />
@@ -208,11 +225,11 @@ export default function PropertiesPage() {
             </div>
           </div>
         ))}
-        {properties.length === 0 && (
+        {filtered.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-16 text-center">
             <Building2 size={28} className="mb-3 text-slate-300" />
-            <p className="text-sm font-medium text-slate-600">Hələ obyekt əlavə olunmayıb</p>
-            <p className="mt-1 text-xs text-slate-400">"Yeni obyekt" düyməsinə bas və ilk elanını əlavə et.</p>
+            <p className="text-sm font-medium text-slate-600">{properties.length === 0 ? 'Hələ obyekt əlavə olunmayıb' : 'Axtarışa uyğun obyekt tapılmadı'}</p>
+            <p className="mt-1 text-xs text-slate-400">{properties.length === 0 ? '"Yeni obyekt" düyməsinə bas və ilk elanını əlavə et.' : 'Başqa açar söz sınayın.'}</p>
           </div>
         )}
       </div>

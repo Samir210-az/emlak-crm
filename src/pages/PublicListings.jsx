@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark } from 'lucide-react'
+import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark, Search } from 'lucide-react'
 import { watchProperties } from '../lib/db.js'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
@@ -9,11 +9,17 @@ export default function PublicListings() {
   const { tenantId } = useParams()
   const [properties, setProperties] = useState(null)
   const [filter, setFilter] = useState('hamısı')
+  const [query, setQuery] = useState('')
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
   const active = (properties || []).filter((p) => p.status !== 'passiv')
-  const visible = filter === 'hamısı' ? active : active.filter((p) => p.dealType === filter)
+  const dealFiltered = filter === 'hamısı' ? active : active.filter((p) => p.dealType === filter)
+  const visible = dealFiltered.filter((p) => {
+    if (!query.trim()) return true
+    const q = query.toLowerCase()
+    return (p.title || '').toLowerCase().includes(q) || (p.district || '').toLowerCase().includes(q)
+  })
   const featured = visible.filter((p) => p.featured)
   const rest = visible.filter((p) => !p.featured)
 
@@ -41,6 +47,16 @@ export default function PublicListings() {
               {f}
             </button>
           ))}
+        </div>
+
+        <div className="mx-auto mt-4 flex max-w-md items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5">
+          <Search size={15} className="text-white/40" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rayon və ya başlığa görə axtar..."
+            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+          />
         </div>
       </header>
 
