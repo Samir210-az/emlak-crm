@@ -86,7 +86,7 @@ export default function PublicListings() {
       </div>
 
       <Footer />
-      <ChatWidget properties={visible} />
+      <ChatWidget properties={visible} tenantId={tenantId} />
       <PublicBottomNav tenantId={tenantId} />
     </div>
   )

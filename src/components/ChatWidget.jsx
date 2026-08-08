@@ -1,19 +1,24 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Send } from 'lucide-react'
+import { X, Send, Phone, UserPlus } from 'lucide-react'
 import { askAgent, extractPropertyRefs } from '../lib/ai'
+import { addClient } from '../lib/db.js'
 
-export default function ChatWidget({ properties = [] }) {
+export default function ChatWidget({ properties = [], tenantId = null }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Salam! 👋 Sizə uyğun ev/mənzil tapmaqda kömək edə bilərəm. Satış, yoxsa kirayə axtarırsınız?' },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showLeadForm, setShowLeadForm] = useState(false)
+  const [leadName, setLeadName] = useState('')
+  const [leadPhone, setLeadPhone] = useState('')
+  const [leadSaved, setLeadSaved] = useState(false)
   const scrollRef = useRef(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, open])
+  }, [messages, open, showLeadForm])
 
   async function send() {
     if (!input.trim() || loading) return
@@ -32,6 +37,25 @@ export default function ChatWidget({ properties = [] }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  async function submitLead(e) {
+    e.preventDefault()
+    if (!leadName.trim() || !leadPhone.trim()) return
+    if (tenantId) {
+      const userTexts = messages.filter((m) => m.role === 'user').map((m) => m.content).join(' · ')
+      await addClient(tenantId, {
+        name: leadName.trim(),
+        phone: leadPhone.trim(),
+        district: '',
+        budget: '',
+        source: 'AI chat',
+        note: userTexts.slice(0, 300),
+      })
+    }
+    setLeadSaved(true)
+    setShowLeadForm(false)
+    setMessages((m) => [...m, { role: 'assistant', content: `Təşəkkürlər, ${leadName.trim()}! Məlumatlarınız qeyd olundu, tezliklə sizinlə əlaqə saxlanılacaq. 📞` }])
   }
 
   return (
@@ -54,12 +78,23 @@ export default function ChatWidget({ properties = [] }) {
 
       {open && (
         <div className="fixed bottom-36 right-5 z-50 flex h-[500px] w-[340px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-fade-up">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-slate-950 to-slate-900 px-4 py-3">
-            <img src="/ai-mascot.png" alt="" className="h-9 w-9 object-contain" />
-            <div>
-              <p className="text-sm font-semibold text-white">Əmlak AI Köməkçi</p>
-              <p className="text-xs text-white/40">Adətən dərhal cavab verir</p>
+          <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-slate-950 to-slate-900 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <img src="/ai-mascot.png" alt="" className="h-9 w-9 object-contain" />
+              <div>
+                <p className="text-sm font-semibold text-white">Əmlak AI Köməkçi</p>
+                <p className="text-xs text-white/40">Adətən dərhal cavab verir</p>
+              </div>
             </div>
+            {tenantId && !leadSaved && (
+              <button
+                onClick={() => setShowLeadForm((s) => !s)}
+                className="flex shrink-0 items-center gap-1 rounded-full bg-amber-400/15 px-2.5 py-1.5 text-[10px] font-semibold text-amber-400 hover:bg-amber-400/25"
+                title="Əlaqə nömrənizi buraxın"
+              >
+                <Phone size={11} /> Əlaqə burax
+              </button>
+            )}
           </div>
 
           <div ref={scrollRef} className="chat-scroll flex-1 space-y-3 overflow-y-auto bg-slate-950 p-4">
@@ -90,6 +125,32 @@ export default function ChatWidget({ properties = [] }) {
               </div>
             ))}
             {loading && <p className="text-xs text-white/30">Yazır...</p>}
+
+            {showLeadForm && (
+              <form onSubmit={submitLead} className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-3">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+                  <UserPlus size={13} /> Əlaqə məlumatınızı buraxın
+                </p>
+                <input
+                  value={leadName}
+                  onChange={(e) => setLeadName(e.target.value)}
+                  placeholder="Adınız"
+                  className="mb-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none placeholder:text-white/30 focus:border-amber-400/50"
+                  required
+                />
+                <input
+                  value={leadPhone}
+                  onChange={(e) => setLeadPhone(e.target.value)}
+                  placeholder="Telefon nömrəniz"
+                  type="tel"
+                  className="mb-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none placeholder:text-white/30 focus:border-amber-400/50"
+                  required
+                />
+                <button type="submit" className="w-full rounded-lg bg-amber-400 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-300">
+                  Göndər
+                </button>
+              </form>
+            )}
           </div>
 
           <div className="flex items-center gap-2 border-t border-white/10 bg-slate-900 p-3">
