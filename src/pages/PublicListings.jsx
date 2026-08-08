@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark, Search, ArrowLeft } from 'lucide-react'
 import { watchProperties } from '../lib/db.js'
+import { trackVisit } from '../lib/analytics.js'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
 import PublicBottomNav from '../components/PublicBottomNav.jsx'
@@ -13,6 +14,7 @@ export default function PublicListings() {
   const [query, setQuery] = useState('')
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
+  useEffect(() => { trackVisit('Günün mənzilləri') }, [])
 
   const active = (properties || []).filter((p) => p.status !== 'passiv')
   const dealFiltered = filter === 'hamısı' ? active : active.filter((p) => p.dealType === filter)

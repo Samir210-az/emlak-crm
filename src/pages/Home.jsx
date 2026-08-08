@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Building2, Sparkles, ArrowRight } from 'lucide-react'
 import Footer from '../components/Footer.jsx'
 import PublicBottomNav from '../components/PublicBottomNav.jsx'
+import { trackVisit } from '../lib/analytics.js'
 
 const HERO_IMG = 'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1800&q=80'
 
@@ -12,16 +15,36 @@ const demoListings = [
 ]
 
 export default function HomePage() {
+  const navigate = useNavigate()
+  const [tapCount, setTapCount] = useState(0)
+
+  useEffect(() => {
+    trackVisit('Ana səhifə')
+  }, [])
+
+  useEffect(() => {
+    if (tapCount === 0) return
+    const timer = setTimeout(() => setTapCount(0), 2000)
+    if (tapCount >= 5) {
+      setTapCount(0)
+      navigate('/master')
+    }
+    return () => clearTimeout(timer)
+  }, [tapCount, navigate])
+
   return (
     <div className="bg-slate-950 pb-16">
       {/* NAV */}
       <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 sm:px-8">
-        <span className="flex items-center gap-2 text-sm font-semibold text-white">
+        <button
+          onClick={() => setTapCount((c) => c + 1)}
+          className="flex items-center gap-2 text-sm font-semibold text-white"
+        >
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-slate-900">
             <Building2 size={16} />
           </span>
           ƏMLAK CRM
-        </span>
+        </button>
         <Link to="/giris" className="text-sm font-medium text-white/70 transition hover:text-white">
           Daxil ol
         </Link>
