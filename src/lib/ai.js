@@ -15,11 +15,15 @@ Həddindən artıq uzun cavab vermə, WhatsApp söhbəti kimi qısa yaz.
 Mövcud obyektlər (JSON):
 ${JSON.stringify(availableProperties?.slice(0, 30) || [])}`
 
+  // Groq/OpenAI formatı yalnız {role, content} qəbul edir — UI üçün əlavə
+  // etdiyimiz "properties", "cta" kimi sahələri təmizləyirik ki, xəta verməsin.
+  const cleanMessages = messages.map(({ role, content }) => ({ role, content }))
+
   const res = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      messages: [{ role: 'system', content: systemPrompt }, ...cleanMessages],
     }),
   })
 

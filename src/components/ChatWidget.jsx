@@ -47,7 +47,8 @@ export default function ChatWidget({ properties = [], tenantId = null, demoMode 
       const matched = properties.filter((p) => ids.includes(p.id))
       setMessages((m) => [...m, { role: 'assistant', content: clean, properties: matched }])
     } catch (err) {
-      setMessages((m) => [...m, { role: 'assistant', content: `Bağışlayın, hazırda cavab verə bilmirəm.\n\n🔧 Debug: ${err.message}` }])
+      console.error('Chat error:', err.message)
+      setMessages((m) => [...m, { role: 'assistant', content: 'Bağışlayın, hazırda cavab verə bilmirəm. Bir az sonra cəhd edin.' }])
     } finally {
       setLoading(false)
     }
