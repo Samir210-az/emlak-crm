@@ -23,7 +23,16 @@ ${JSON.stringify(availableProperties?.slice(0, 30) || [])}`
     }),
   })
 
-  if (!res.ok) throw new Error('AI cavab vermədi')
+  if (!res.ok) {
+    let detail = ''
+    try {
+      const errJson = await res.json()
+      detail = errJson.detail || errJson.error || ''
+    } catch {}
+    const err = new Error('AI cavab vermədi: ' + detail)
+    err.status = res.status
+    throw err
+  }
   const data = await res.json()
   return data.reply
 }
