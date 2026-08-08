@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Building2, Plus, Phone, Eye, MapPin, Monitor } from "lucide-react";
-import { db, ref, onValue, set } from "../lib/firebase.js";
+import { Lock, Building2, Plus, Phone, Eye, MapPin, Monitor, Trash2 } from "lucide-react";
+import { db, ref, onValue, set, remove } from "../lib/firebase.js";
 
 const ADMIN_PIN = "AN2026EA";
 const DAY = 24 * 60 * 60 * 1000;
@@ -61,6 +61,22 @@ export default function SuperAdmin() {
       await set(ref(db, `emlak_crm/tenants/${tenantId}/profil/plan`), plan);
       setDoneId(key);
       setTimeout(() => setDoneId((cur) => (cur === key ? null : cur)), 1500);
+    } catch (err) {
+      setWriteError(err.message || String(err));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function deleteTenant(tenantId, phone) {
+    if (!window.confirm(`Diqqət! "${tenantId}" agentliyini silmək istədiyinə əminsən? Bütün obyektləri, müştəriləri və sövdələşmələri həmişəlik silinəcək.`)) return;
+    setBusyId(`del-${tenantId}`);
+    try {
+      await remove(ref(db, `emlak_crm/tenants/${tenantId}`));
+      if (phone) {
+        const phoneKey = phone.replace(/[^\d]/g, "");
+        await remove(ref(db, `emlak_crm/phone_index/${phoneKey}`));
+      }
     } catch (err) {
       setWriteError(err.message || String(err));
     } finally {
@@ -203,6 +219,13 @@ export default function SuperAdmin() {
                         }`}
                       >
                         <Plus size={12} /> {busyId === `${id}-365` ? "..." : doneId === `${id}-365` ? "✓ Oldu" : "1 il"}
+                      </button>
+                      <button
+                        onClick={() => deleteTenant(id, p.telefon)}
+                        disabled={busyId === `del-${id}`}
+                        className="flex items-center gap-1 rounded-full border border-red-400/20 bg-red-400/5 px-3 py-1.5 text-xs font-semibold text-red-400 transition-colors hover:bg-red-400/15 disabled:opacity-40"
+                      >
+                        <Trash2 size={12} /> {busyId === `del-${id}` ? "..." : "Sil"}
                       </button>
                     </div>
                   </div>

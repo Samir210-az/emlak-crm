@@ -22,6 +22,7 @@ export default function PropertiesPage() {
   const [binaModal, setBinaModal] = useState(null)
   const [query, setQuery] = useState('')
   const [seeding, setSeeding] = useState(false)
+  const [editingId, setEditingId] = useState(null)
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
@@ -48,8 +49,33 @@ export default function PropertiesPage() {
     e.preventDefault()
     if (!form.title || !form.price) return
     const images = form.images.split('\n').map((s) => s.trim()).filter(Boolean)
-    await addProperty(tenantId, { ...form, images })
+    if (editingId) {
+      await updateProperty(tenantId, editingId, { ...form, images })
+      setEditingId(null)
+    } else {
+      await addProperty(tenantId, { ...form, images })
+    }
     setForm(emptyForm)
+    setShowForm(false)
+  }
+
+  function startEdit(p) {
+    setForm({
+      title: p.title || '', district: p.district || '', address: p.address || '',
+      rooms: p.rooms || '', floor: p.floor || '', floorTotal: p.floorTotal || '',
+      area: p.area || '', documentType: p.documentType || 'çıxarış', dealType: p.dealType || 'satış',
+      mortgage: !!p.mortgage, price: p.price || '', ownerPhone: p.ownerPhone || '',
+      images: (p.images || []).join('\n'), description: p.description || '',
+      status: p.status || 'aktiv', featured: !!p.featured,
+    })
+    setEditingId(p.id)
+    setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function cancelForm() {
+    setForm(emptyForm)
+    setEditingId(null)
     setShowForm(false)
   }
 
@@ -81,7 +107,7 @@ export default function PropertiesPage() {
           <p className="text-sm text-white/40">{properties.length} obyekt</p>
         </div>
         <button
-          onClick={() => setShowForm((s) => !s)}
+          onClick={() => (showForm ? cancelForm() : setShowForm(true))}
           className="flex items-center gap-2 rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-amber-300"
         >
           <Plus size={16} /> Yeni obyekt
@@ -123,6 +149,9 @@ export default function PropertiesPage() {
 
       {showForm && (
         <form onSubmit={handleAdd} className="mb-6 grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2">
+          <p className="text-sm font-semibold text-amber-400 sm:col-span-2">
+            {editingId ? 'Obyekti redaktə et' : 'Yeni obyekt'}
+          </p>
           <input placeholder="Başlıq (məs. Yeni Yasamal, 3 otaqlı)" value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             className={`${inputCls} sm:col-span-2`} required />
@@ -184,9 +213,16 @@ export default function PropertiesPage() {
               onChange={(e) => setForm({ ...form, featured: e.target.checked })} />
             <Star size={14} className="text-amber-400" /> "Günün mənzili" kimi önə çıxar
           </label>
-          <button type="submit" className="rounded-lg bg-amber-400 py-2.5 text-sm font-semibold text-slate-900 hover:bg-amber-300 sm:col-span-2">
-            Əlavə et
-          </button>
+          <div className="flex gap-2 sm:col-span-2">
+            <button type="submit" className="flex-1 rounded-lg bg-amber-400 py-2.5 text-sm font-semibold text-slate-900 hover:bg-amber-300">
+              {editingId ? 'Yadda saxla' : 'Əlavə et'}
+            </button>
+            {editingId && (
+              <button type="button" onClick={cancelForm} className="rounded-lg border border-white/10 px-5 py-2.5 text-sm font-medium text-white/60 hover:bg-white/5">
+                Ləğv et
+              </button>
+            )}
+          </div>
         </form>
       )}
 
@@ -234,12 +270,20 @@ export default function PropertiesPage() {
               >
                 <Send size={12} /> Saytlara elan mətni hazırla (5 sayt)
               </button>
-              <button
-                onClick={() => updateProperty(tenantId, p.id, { featured: !p.featured })}
-                className="mt-2 text-xs text-white/40 hover:text-amber-400"
-              >
-                {p.featured ? 'Önə çıxarmadan sil' : 'Günün mənzili et'}
-              </button>
+              <div className="mt-2 flex items-center gap-3">
+                <button
+                  onClick={() => startEdit(p)}
+                  className="text-xs text-white/40 hover:text-amber-400"
+                >
+                  Redaktə et
+                </button>
+                <button
+                  onClick={() => updateProperty(tenantId, p.id, { featured: !p.featured })}
+                  className="text-xs text-white/40 hover:text-amber-400"
+                >
+                  {p.featured ? 'Önə çıxarmadan sil' : 'Günün mənzili et'}
+                </button>
+              </div>
             </div>
           </div>
         ))}
