@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import { Building2, Users, Handshake, LogOut, Home, Lock, LayoutDashboard } from "lucide-react";
 import { getSession, clearSession } from "../lib/session.js";
-import { watchProfil } from "../lib/db.js";
+import { watchProfil, watchProperties } from "../lib/db.js";
+import ChatWidget from "../components/ChatWidget.jsx";
 
 const navItems = [
   { to: "/admin/dashboard", label: "İcmal", icon: LayoutDashboard },
@@ -15,6 +16,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const session = getSession();
   const [profil, setProfil] = useState(undefined);
+  const [properties, setProperties] = useState([]);
 
   useEffect(() => {
     if (!session) {
@@ -24,6 +26,12 @@ export default function AdminLayout() {
     const unsub = watchProfil(session.tenantId, setProfil);
     return unsub;
   }, [session, navigate]);
+
+  useEffect(() => {
+    if (!session) return;
+    const unsub = watchProperties(session.tenantId, setProperties);
+    return unsub;
+  }, [session]);
 
   if (!session) return null;
   if (profil === undefined) {
@@ -120,6 +128,8 @@ export default function AdminLayout() {
           Çıxış
         </button>
       </nav>
+
+      <ChatWidget properties={properties} />
     </div>
   );
 }
