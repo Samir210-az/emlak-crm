@@ -35,6 +35,7 @@ export function deleteClient(tenantId, id) {
 
 // ---------- Deals (Sövdələşmələr) ----------
 export const DEAL_STAGES = ["beh", "bank_tesdiqi", "notariat", "tehvil_teslim", "bitib"];
+export const RENT_STAGES = ["muqavile", "depozit", "acar_teslim", "bitib"];
 
 export function watchDeals(tenantId, callback) {
   return onValue(ref(db, tenantPath(tenantId, "deals")), (snap) => {
@@ -44,7 +45,8 @@ export function watchDeals(tenantId, callback) {
 }
 export function addDeal(tenantId, data) {
   const r = push(ref(db, tenantPath(tenantId, "deals")));
-  return set(r, { ...data, stage: "beh", createdAt: Date.now() });
+  const initialStage = data.dealType === "kirayə" ? "muqavile" : "beh";
+  return set(r, { ...data, stage: initialStage, createdAt: Date.now() });
 }
 export function updateDealStage(tenantId, id, stage) {
   return update(ref(db, tenantPath(tenantId, "deals", id)), { stage });
