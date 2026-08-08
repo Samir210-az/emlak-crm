@@ -3,18 +3,12 @@ import { Link } from 'react-router-dom'
 import { Building2, Sparkles, ArrowRight } from 'lucide-react'
 import Footer from '../components/Footer.jsx'
 import PublicBottomNav from '../components/PublicBottomNav.jsx'
-import ChatWidget from '../components/ChatWidget.jsx'
 
 const HERO_IMG = 'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1800&q=80'
 
 const demoListings = [
   { title: 'Yeni Yasamal, 3 otaqlı', price: '275 000', tag: 'Günün mənzili' },
   { title: 'Xətai r., Gəncə prospekti', price: '145 000', tag: 'Kirayə var' },
-]
-
-const demoProperties = [
-  { id: 'demo1', title: 'Yeni Yasamal, 3 otaqlı', price: '275000', rooms: '3', dealType: 'satış', district: 'Yasamal', images: [] },
-  { id: 'demo2', title: 'Xətai r., Gəncə prospekti, 2 otaqlı', price: '650', rooms: '2', dealType: 'kirayə', district: 'Xətai', images: [] },
 ]
 
 export default function HomePage() {
@@ -120,7 +114,6 @@ export default function HomePage() {
       </section>
 
       <Footer />
-      <ChatWidget properties={demoProperties} demoMode />
       <PublicBottomNav />
     </div>
   )
