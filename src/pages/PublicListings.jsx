@@ -4,6 +4,7 @@ import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark, Search, ArrowLef
 import { watchProperties } from '../lib/db.js'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
+import PublicBottomNav from '../components/PublicBottomNav.jsx'
 
 export default function PublicListings() {
   const { tenantId } = useParams()
@@ -24,7 +25,7 @@ export default function PublicListings() {
   const rest = visible.filter((p) => !p.featured)
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-950 pb-16">
       <header className="border-b border-white/10 bg-gradient-to-r from-brand-900 via-slate-950 to-brand-900 px-6 py-8 text-center">
         <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white">
           <ArrowLeft size={13} /> Əmlak CRM ana səhifəsi
@@ -86,6 +87,7 @@ export default function PublicListings() {
 
       <Footer />
       <ChatWidget properties={visible} />
+      <PublicBottomNav tenantId={tenantId} />
     </div>
   )
 }

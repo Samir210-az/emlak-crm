@@ -5,7 +5,7 @@ import { askAgent, extractPropertyRefs } from '../lib/ai'
 export default function ChatWidget({ properties = [] }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Salam! 👋 Sizə uyğun ev/mənzil tapmaqda kömək edə bilərəm. Hansı rayonda, neçə otaqlı və hansı büdcədə axtarırsınız?' },
+    { role: 'assistant', content: 'Salam! 👋 Sizə uyğun ev/mənzil tapmaqda kömək edə bilərəm. Satış, yoxsa kirayə axtarırsınız?' },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -36,46 +36,45 @@ export default function ChatWidget({ properties = [] }) {
 
   return (
     <>
-      {/* Floating trigger */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-white shadow-xl shadow-brand-500/30 transition-transform hover:scale-105 animate-float"
+        className="fixed bottom-20 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 text-slate-900 shadow-xl shadow-amber-400/30 transition-transform hover:scale-105 animate-float"
         aria-label="AI köməkçi ilə danış"
       >
-        {open ? <X size={26} /> : <MessageCircle size={26} />}
+        {open ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[520px] w-[360px] max-w-[92vw] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl animate-fade-up">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-3 text-white">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
-              <Home size={18} />
+        <div className="fixed bottom-36 right-5 z-50 flex h-[500px] w-[340px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-fade-up">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-slate-950 to-slate-900 px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-400/15">
+              <Home size={18} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-sm font-semibold">Əmlak AI Köməkçi</p>
-              <p className="text-xs text-white/80">Adətən dərhal cavab verir</p>
+              <p className="text-sm font-semibold text-white">Əmlak AI Köməkçi</p>
+              <p className="text-xs text-white/40">Adətən dərhal cavab verir</p>
             </div>
           </div>
 
-          <div ref={scrollRef} className="chat-scroll flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
+          <div ref={scrollRef} className="chat-scroll flex-1 space-y-3 overflow-y-auto bg-slate-950 p-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
                     m.role === 'user'
-                      ? 'rounded-br-sm bg-brand-600 text-white'
-                      : 'rounded-bl-sm bg-white text-slate-700 shadow-sm'
+                      ? 'rounded-br-sm bg-amber-400 text-slate-900'
+                      : 'rounded-bl-sm bg-white/[0.06] text-white/90 border border-white/10'
                   }`}
                 >
                   {m.content}
                   {m.properties?.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {m.properties.map((p) => (
-                        <div key={p.id} className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-                          {p.image && <img src={p.image} alt={p.title} className="h-28 w-full object-cover" />}
+                        <div key={p.id} className="overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                          {p.images?.[0] && <img src={p.images[0]} alt={p.title} className="h-28 w-full object-cover" />}
                           <div className="p-2">
-                            <p className="text-xs font-semibold text-slate-800">{p.title}</p>
-                            <p className="text-xs text-brand-600 font-medium">{p.price} AZN</p>
+                            <p className="text-xs font-semibold text-white">{p.title}</p>
+                            <p className="text-xs font-medium text-amber-400">{p.price} AZN</p>
                           </div>
                         </div>
                       ))}
@@ -84,20 +83,20 @@ export default function ChatWidget({ properties = [] }) {
                 </div>
               </div>
             ))}
-            {loading && <p className="text-xs text-slate-400">Yazır...</p>}
+            {loading && <p className="text-xs text-white/30">Yazır...</p>}
           </div>
 
-          <div className="flex items-center gap-2 border-t border-slate-200 p-3">
+          <div className="flex items-center gap-2 border-t border-white/10 bg-slate-900 p-3">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Mesajınızı yazın..."
-              className="flex-1 rounded-full border border-slate-200 px-4 py-2 text-sm outline-none focus:border-brand-400"
+              className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white outline-none placeholder:text-white/30 focus:border-amber-400/50"
             />
             <button
               onClick={send}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white transition hover:bg-brand-700"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-400 text-slate-900 transition hover:bg-amber-300"
             >
               <Send size={16} />
             </button>

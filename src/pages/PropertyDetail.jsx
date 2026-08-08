@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, MapPin, FileText, Layers, Ruler, Phone, DoorOpen, Landmark, Home as HomeIcon } from 'lucide-react'
 import { ref, db, onValue, tenantPath } from '../lib/firebase.js'
+import PublicBottomNav from '../components/PublicBottomNav.jsx'
 
 export default function PropertyDetail() {
   const { tenantId, propertyId } = useParams()
@@ -111,6 +112,7 @@ export default function PropertyDetail() {
           </div>
         </div>
       </div>
+      <PublicBottomNav tenantId={tenantId} />
     </div>
   )
 }

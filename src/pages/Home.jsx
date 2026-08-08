@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Building2, MessageSquareText, ShieldCheck, Sparkles, ArrowRight, Send } from 'lucide-react'
 import Footer from '../components/Footer.jsx'
+import PublicBottomNav from '../components/PublicBottomNav.jsx'
 
 const HERO_IMG = 'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1800&q=80'
 
@@ -12,7 +13,7 @@ const demoListings = [
 
 export default function HomePage() {
   return (
-    <div className="bg-slate-950">
+    <div className="bg-slate-950 pb-16">
       {/* NAV */}
       <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 sm:px-8">
         <span className="flex items-center gap-2 text-sm font-semibold text-white">
@@ -135,6 +136,7 @@ export default function HomePage() {
       </section>
 
       <Footer />
+      <PublicBottomNav />
     </div>
   )
 }
