@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, MapPin, FileText, Layers, Ruler, Phone, DoorOpen, Landmark } from 'lucide-react'
+import { ArrowLeft, MapPin, FileText, Layers, Ruler, Phone, DoorOpen, Landmark, Home as HomeIcon } from 'lucide-react'
 import { ref, db, onValue, tenantPath } from '../lib/firebase.js'
 
 export default function PropertyDetail() {
@@ -33,9 +33,14 @@ export default function PropertyDetail() {
   return (
     <div className="min-h-screen bg-slate-950 pb-16 text-white">
       <div className="mx-auto max-w-4xl px-4 py-6">
-        <Link to={`/elanlar/${tenantId}`} className="mb-5 inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white">
-          <ArrowLeft size={15} /> Bütün elanlara qayıt
-        </Link>
+        <div className="mb-5 flex items-center justify-between">
+          <Link to={`/elanlar/${tenantId}`} className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white">
+            <ArrowLeft size={15} /> Bütün elanlara qayıt
+          </Link>
+          <Link to="/" className="flex items-center gap-1.5 text-xs font-medium text-white/40 hover:text-white">
+            <HomeIcon size={13} /> Əmlak CRM
+          </Link>
+        </div>
 
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
           {images.length > 0 ? (

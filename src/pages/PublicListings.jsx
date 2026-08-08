@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark, Search } from 'lucide-react'
+import { Home, MapPin, Star, FileText, Layers, Ruler, Landmark, Search, ArrowLeft } from 'lucide-react'
 import { watchProperties } from '../lib/db.js'
 import ChatWidget from '../components/ChatWidget.jsx'
 import Footer from '../components/Footer.jsx'
@@ -26,6 +26,9 @@ export default function PublicListings() {
   return (
     <div className="min-h-screen bg-slate-950">
       <header className="border-b border-white/10 bg-gradient-to-r from-brand-900 via-slate-950 to-brand-900 px-6 py-8 text-center">
+        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white">
+          <ArrowLeft size={13} /> Əmlak CRM ana səhifəsi
+        </Link>
         <div className="mx-auto flex max-w-4xl items-center justify-center gap-2 text-amber-400">
           <Home size={20} />
           <span className="text-xs font-semibold uppercase tracking-widest">Günün mənzilləri</span>
