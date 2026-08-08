@@ -1,4 +1,4 @@
-// Çoxplatformalı elan mətni generatoru (bina.az, tap.az, arenda.az formatlarına uyğun)
+// Çoxplatformalı elan mətni generatoru (bina.az, tap.az, emlak.az, evler.az, arenda.az formatlarına uyğun)
 
 function baseLines(p) {
   const dealLabel = p.dealType === 'kirayə' ? 'KİRAYƏ VERİLİR' : 'SATILIR'
@@ -16,9 +16,11 @@ function baseLines(p) {
 }
 
 export const LISTING_PLATFORMS = [
-  { id: 'bina', name: 'Bina.az', url: 'https://bina.az/items/new', color: '#e10600' },
-  { id: 'tap', name: 'Tap.az', url: 'https://tap.az/elan/yeni', color: '#00a4e4' },
-  { id: 'arenda', name: 'Arenda.az', url: 'https://arenda.az/elan-yerlesdir', color: '#f5a623' },
+  { id: 'bina', name: 'Bina.az', url: 'https://bina.az/items/new' },
+  { id: 'tap', name: 'Tap.az', url: 'https://tap.az/elanlar/new' },
+  { id: 'emlak', name: 'Emlak.az', url: 'https://www.emlak.az/elan-ver' },
+  { id: 'evler', name: 'Evler.az', url: 'https://evler.az/elan-yerlesdir' },
+  { id: 'arenda', name: 'Arenda.az', url: 'https://arenda.az/elan-yerlesdir' },
 ]
 
 export function generateListingText(p, platformId = 'bina') {
@@ -28,6 +30,8 @@ export function generateListingText(p, platformId = 'bina') {
     lines.push('', 'Kirayə/satış şərtləri barədə əlavə məlumat üçün əlaqə saxlayın.')
   } else if (platformId === 'tap') {
     lines.push('', '#emlak #dasinmazemlak #' + (p.district || 'baki').replace(/\s+/g, ''))
+  } else if (platformId === 'emlak' || platformId === 'evler') {
+    lines.push('', 'Ətraflı məlumat, baxış vaxtı və sənədləşmə üçün əlaqə saxlayın.')
   } else {
     lines.push('', 'Ətraflı məlumat və baxış üçün əlaqə saxlayın.')
   }

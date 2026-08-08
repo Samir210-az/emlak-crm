@@ -232,7 +232,7 @@ export default function PropertiesPage() {
                 onClick={() => openBinaModal(p)}
                 className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 py-2 text-xs font-semibold text-amber-400 transition hover:bg-amber-400/20"
               >
-                <Send size={12} /> Saytlara elan mətni hazırla (Bina.az / Tap.az / Arenda.az)
+                <Send size={12} /> Saytlara elan mətni hazırla (5 sayt)
               </button>
               <button
                 onClick={() => updateProperty(tenantId, p.id, { featured: !p.featured })}
@@ -259,12 +259,12 @@ export default function PropertiesPage() {
               <HomeIcon size={18} className="text-amber-400" />
               <h2 className="font-semibold text-white">Elan mətni — platforma seç</h2>
             </div>
-            <div className="mb-3 flex gap-2">
+            <div className="mb-3 grid grid-cols-3 gap-1.5">
               {LISTING_PLATFORMS.map((pl) => (
                 <button
                   key={pl.id}
                   onClick={() => switchPlatform(pl.id)}
-                  className={`flex-1 rounded-lg py-2 text-xs font-semibold transition ${
+                  className={`rounded-lg py-2 text-xs font-semibold transition ${
                     binaModal.platform === pl.id ? 'bg-amber-400 text-slate-900' : 'bg-white/5 text-white/60 hover:bg-white/10'
                   }`}
                 >

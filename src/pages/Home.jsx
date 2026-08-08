@@ -70,7 +70,7 @@ export default function HomePage() {
             className="mt-5 max-w-md text-sm text-white/60 sm:text-base"
           >
             Satış və kirayə elanları, ipoteka statusu, müştəri ilə 7/24 danışan AI agent
-            və bina.az üçün hazır elan mətni — hamısı bir yerdə.
+            və 5 aparıcı sayt üçün hazır elan mətni — hamısı bir yerdə.
           </motion.p>
 
           <motion.div

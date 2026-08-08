@@ -1,3 +1,5 @@
+import InstallButton from './InstallButton.jsx'
+
 export default function Footer() {
   return (
     <footer className="border-t border-slate-800 bg-slate-950 py-10 text-center">
@@ -9,6 +11,9 @@ export default function Footer() {
       >
         By securtiy_group
       </a>
+      <div className="mt-3">
+        <InstallButton />
+      </div>
     </footer>
   )
 }

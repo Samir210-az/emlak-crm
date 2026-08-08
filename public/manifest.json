@@ -1,0 +1,25 @@
+{
+  "name": "Əmlak CRM",
+  "short_name": "Əmlak CRM",
+  "description": "Azərbaycan əmlak agentlikləri üçün AI dəstəkli idarəetmə sistemi.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/ai-mascot.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ai-mascot.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
