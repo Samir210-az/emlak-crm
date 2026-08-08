@@ -5,10 +5,9 @@ export default function Footer() {
         href="https://instagram.com/securtiy_group"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex flex-col items-center gap-0.5 transition hover:opacity-80"
+        className="text-sm text-amber-400 transition-colors hover:text-amber-300"
       >
-        <span className="text-sm text-slate-400">By securtiy_group</span>
-        <span className="text-xs font-medium text-amber-400">instagram.com/securtiy_group</span>
+        By securtiy_group
       </a>
     </footer>
   )
