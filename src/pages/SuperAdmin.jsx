@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Lock, Building2, Plus, Phone, Eye, MapPin, Monitor, Trash2 } from "lucide-react";
 import { db, ref, onValue, set, remove } from "../lib/firebase.js";
 
-const ADMIN_PIN = "AN2026EA";
+const ADMIN_PIN = "AL2026EA";
 const DAY = 24 * 60 * 60 * 1000;
 
 export default function SuperAdmin() {
