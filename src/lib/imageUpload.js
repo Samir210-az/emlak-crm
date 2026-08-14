@@ -1,4 +1,4 @@
-import { storage, storageRef, uploadBytesResumable, getDownloadURL } from './firebase.js'
+import { storage, storageRef, uploadBytes, getDownloadURL } from './firebase.js'
 
 // Şəkli brauzerdə yükləmədən əvvəl kiçildir və sıxır.
 function compressImage(file, maxWidth = 1600, quality = 0.78) {
@@ -44,8 +44,15 @@ function compressImage(file, maxWidth = 1600, quality = 0.78) {
   })
 }
 
-// Bir şəkli sıxıb Firebase Storage-a yükləyir, endirmə linkini qaytarır.
-// onStatus(stage, pct) -> stage: 'compressing' | 'uploading' | 'done'
+function withTimeout(promise, ms, message) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
+  ])
+}
+
+// Bir şəkli sıxıb Firebase Storage-a BİR ZƏRBƏDƏ (resumable olmadan) yükləyir.
+// Bu üsul bəzi məhdudlaşdırıcı şəbəkələrdə/proksilərdə resumable protokoldan daha etibarlıdır.
 export async function uploadPropertyImage(tenantId, file, onStatus) {
   console.log('[uploadPropertyImage] başladı:', file.name, file.size, 'bytes')
   if (onStatus) onStatus('compressing', 0)
@@ -65,62 +72,29 @@ export async function uploadPropertyImage(tenantId, file, onStatus) {
   const path = `emlak_crm/properties/${tenantId}/${Date.now()}_${safeName}.jpg`
   const fileRef = storageRef(storage, path)
 
-  return new Promise((resolve, reject) => {
-    const task = uploadBytesResumable(fileRef, compressed, { contentType: 'image/jpeg' })
-
-    let settled = false
-    let stallTimer = null
-    let lastBytes = -1
-
-    // Timeout hər dəfə "canlı" siqnal (progress event) alanda YENİDƏN qurulur.
-    // Əgər 20 saniyə ərzində HEÇ BİR yeni məlumat ötürülməsə (bytes dəyişməsə), xəta veririk.
-    function armStallTimer() {
-      if (stallTimer) clearTimeout(stallTimer)
-      stallTimer = setTimeout(() => {
-        if (settled) return
-        settled = true
-        console.error('[uploadPropertyImage] 20 saniyədir irəliləyiş yoxdur (real şəbəkə dayanması), dayandırılır')
-        task.cancel()
-        reject(new Error('Şəbəkə Firebase Storage-a qoşula bilmir və ya məlumat ötürülməsi dayanıb (20 saniyə heç bir irəliləyiş yoxdur). Zəhmət olmasa başqa bir Wi-Fi/mobil data ilə sına.'))
-      }, 20000)
-    }
-    armStallTimer()
-
-    task.on(
-      'state_changed',
-      (snap) => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
-        console.log('[uploadPropertyImage] irəliləyiş:', pct + '%', snap.bytesTransferred, '/', snap.totalBytes)
-        if (onStatus) onStatus('uploading', pct)
-        // Yalnız real dəyişiklik olanda timer-i sıfırlayırıq — sabit 0%-də donub qalsa da tutulsun.
-        if (snap.bytesTransferred !== lastBytes) {
-          lastBytes = snap.bytesTransferred
-          armStallTimer()
-        }
-      },
-      (err) => {
-        if (settled) return
-        settled = true
-        clearTimeout(stallTimer)
-        console.error('[uploadPropertyImage] Storage xətası:', err.code, err.message)
-        reject(new Error(`Storage xətası (${err.code}): ${err.message}`))
-      },
-      async () => {
-        if (settled) return
-        settled = true
-        clearTimeout(stallTimer)
-        try {
-          const url = await getDownloadURL(task.snapshot.ref)
-          console.log('[uploadPropertyImage] tamamlandı:', url)
-          if (onStatus) onStatus('done', 100)
-          resolve(url)
-        } catch (err) {
-          console.error('[uploadPropertyImage] URL alınmadı:', err)
-          reject(err)
-        }
-      }
+  try {
+    await withTimeout(
+      uploadBytes(fileRef, compressed, { contentType: 'image/jpeg' }),
+      30000,
+      'Yükləmə 30 saniyədən sonra cavab vermədi. Şəbəkə Firebase Storage-a çata bilmir.'
     )
-  })
+    console.log('[uploadPropertyImage] yükləndi, link alınır...')
+    if (onStatus) onStatus('uploading', 90)
+    const url = await withTimeout(
+      getDownloadURL(fileRef),
+      15000,
+      'Link alınması 15 saniyədən sonra cavab vermədi.'
+    )
+    console.log('[uploadPropertyImage] tamamlandı:', url)
+    if (onStatus) onStatus('done', 100)
+    return url
+  } catch (err) {
+    console.error('[uploadPropertyImage] xəta:', err)
+    if (err.code) {
+      throw new Error(`Storage xətası (${err.code}): ${err.message}`)
+    }
+    throw err
+  }
 }
 
 // Bir neçə şəkli ardıcıl yükləyir, hər birinin gedişatını bildirir.
