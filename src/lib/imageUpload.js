@@ -1,7 +1,6 @@
 import { storage, storageRef, uploadBytesResumable, getDownloadURL } from './firebase.js'
 
 // Şəkli brauzerdə yükləmədən əvvəl kiçildir və sıxır.
-// Standart telefon şəkli (3-8 MB) belə ~150-350 KB-a düşür, keyfiyyət gözlə fərqlənmir.
 function compressImage(file, maxWidth = 1600, quality = 0.78) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Şəkil sıxılması vaxtı bitdi (timeout)')), 20000)
@@ -69,27 +68,47 @@ export async function uploadPropertyImage(tenantId, file, onStatus) {
   return new Promise((resolve, reject) => {
     const task = uploadBytesResumable(fileRef, compressed, { contentType: 'image/jpeg' })
 
-    const stallTimeout = setTimeout(() => {
-      console.error('[uploadPropertyImage] 25 saniyə heç bir irəliləyiş yoxdur, dayandırılır')
-      task.cancel()
-      reject(new Error('Yükləmə 25 saniyədən sonra cavab vermədi (şəbəkə və ya Storage qaydaları problemi ola bilər)'))
-    }, 25000)
+    let settled = false
+    let stallTimer = null
+    let lastBytes = -1
+
+    // Timeout hər dəfə "canlı" siqnal (progress event) alanda YENİDƏN qurulur.
+    // Əgər 20 saniyə ərzində HEÇ BİR yeni məlumat ötürülməsə (bytes dəyişməsə), xəta veririk.
+    function armStallTimer() {
+      if (stallTimer) clearTimeout(stallTimer)
+      stallTimer = setTimeout(() => {
+        if (settled) return
+        settled = true
+        console.error('[uploadPropertyImage] 20 saniyədir irəliləyiş yoxdur (real şəbəkə dayanması), dayandırılır')
+        task.cancel()
+        reject(new Error('Şəbəkə Firebase Storage-a qoşula bilmir və ya məlumat ötürülməsi dayanıb (20 saniyə heç bir irəliləyiş yoxdur). Zəhmət olmasa başqa bir Wi-Fi/mobil data ilə sına.'))
+      }, 20000)
+    }
+    armStallTimer()
 
     task.on(
       'state_changed',
       (snap) => {
-        clearTimeout(stallTimeout)
         const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
-        console.log('[uploadPropertyImage] irəliləyiş:', pct + '%')
+        console.log('[uploadPropertyImage] irəliləyiş:', pct + '%', snap.bytesTransferred, '/', snap.totalBytes)
         if (onStatus) onStatus('uploading', pct)
+        // Yalnız real dəyişiklik olanda timer-i sıfırlayırıq — sabit 0%-də donub qalsa da tutulsun.
+        if (snap.bytesTransferred !== lastBytes) {
+          lastBytes = snap.bytesTransferred
+          armStallTimer()
+        }
       },
       (err) => {
-        clearTimeout(stallTimeout)
+        if (settled) return
+        settled = true
+        clearTimeout(stallTimer)
         console.error('[uploadPropertyImage] Storage xətası:', err.code, err.message)
         reject(new Error(`Storage xətası (${err.code}): ${err.message}`))
       },
       async () => {
-        clearTimeout(stallTimeout)
+        if (settled) return
+        settled = true
+        clearTimeout(stallTimer)
         try {
           const url = await getDownloadURL(task.snapshot.ref)
           console.log('[uploadPropertyImage] tamamlandı:', url)
