@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2, Search } from 'lucide-react'
+import { Plus, Trash2, MapPin, Star, Copy, ExternalLink, Landmark, Home as HomeIcon, Send, Building2, Search, ImagePlus, X, Loader2 } from 'lucide-react'
 import { watchProperties, addProperty, deleteProperty, updateProperty } from '../../lib/db.js'
 import { generateListingText, LISTING_PLATFORMS } from '../../lib/listingText.js'
 import { sampleProperties } from '../../lib/seedData.js'
+import { uploadPropertyImages } from '../../lib/imageUpload.js'
 
 const emptyForm = {
   title: '', district: '', address: '', rooms: '', floor: '', floorTotal: '',
@@ -23,6 +24,9 @@ export default function PropertiesPage() {
   const [query, setQuery] = useState('')
   const [seeding, setSeeding] = useState(false)
   const [editingId, setEditingId] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadTotal, setUploadTotal] = useState(0)
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
@@ -57,6 +61,37 @@ export default function PropertiesPage() {
     }
     setForm(emptyForm)
     setShowForm(false)
+  }
+
+  const imageList = form.images.split('\n').map((s) => s.trim()).filter(Boolean)
+
+  async function handleImageUpload(e) {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    setUploading(true)
+    setUploadTotal(files.length)
+    setUploadProgress(0)
+    try {
+      const urls = await uploadPropertyImages(tenantId, files, (idx, pct) => {
+        setUploadProgress(Math.round(((idx + pct / 100) / files.length) * 100))
+      })
+      setForm((f) => ({
+        ...f,
+        images: [...f.images.split('\n').map((s) => s.trim()).filter(Boolean), ...urls].join('\n'),
+      }))
+    } catch (err) {
+      alert('Şəkil yüklənərkən xəta baş verdi: ' + err.message)
+    } finally {
+      setUploading(false)
+      setUploadProgress(0)
+      setUploadTotal(0)
+      e.target.value = ''
+    }
+  }
+
+  function removeImage(idx) {
+    const next = imageList.filter((_, i) => i !== idx)
+    setForm((f) => ({ ...f, images: next.join('\n') }))
   }
 
   function startEdit(p) {
@@ -202,9 +237,52 @@ export default function PropertiesPage() {
             </label>
           )}
 
-          <textarea placeholder="Şəkil URL-ləri (hər sətirdə bir link)" value={form.images}
-            onChange={(e) => setForm({ ...form, images: e.target.value })} rows={3}
-            className={`${inputCls} sm:col-span-2`} />
+          <div className="sm:col-span-2">
+            <label className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-amber-400/30 bg-amber-400/5 py-3 text-sm font-medium text-amber-400 transition hover:bg-amber-400/10 ${uploading ? 'pointer-events-none opacity-70' : ''}`}>
+              {uploading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Yüklənir... {uploadProgress}% ({uploadTotal} şəkil)
+                </>
+              ) : (
+                <>
+                  <ImagePlus size={16} /> Şəkil seç və yüklə (bir neçəsini birdən seçə bilərsən)
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+
+            {imageList.length > 0 && (
+              <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
+                {imageList.map((url, idx) => (
+                  <div key={url + idx} className="group relative aspect-square overflow-hidden rounded-lg border border-white/10">
+                    <img src={url} alt="" className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="absolute right-1 top-1 rounded-full bg-black/70 p-1 text-white opacity-0 transition group-hover:opacity-100"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs text-white/30 hover:text-white/50">Və ya şəkil linklərini əl ilə yaz</summary>
+              <textarea placeholder="Şəkil URL-ləri (hər sətirdə bir link)" value={form.images}
+                onChange={(e) => setForm({ ...form, images: e.target.value })} rows={3}
+                className={`${inputCls} mt-2 w-full`} />
+            </details>
+          </div>
           <textarea placeholder="Təsvir" value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
             className={`${inputCls} sm:col-span-2`} />
