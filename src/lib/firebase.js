@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, get, set, push, update, remove, onValue } from "firebase/database";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 // TODO (Samir): Firebase Console-da yaratdığın "emlak-crm" layihəsinin
 // tam config-ini bura yapışdır (Project Settings -> General -> Your apps -> Web app).
@@ -17,13 +18,14 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
+export const storage = getStorage(app);
 
 const ROOT = "emlak_crm/tenants";
 
 export const tenantPath = (tenantId, ...segments) =>
   [ROOT, tenantId, ...segments].filter(Boolean).join("/");
 
-export { ref, get, set, push, update, remove, onValue };
+export { ref, get, set, push, update, remove, onValue, storageRef, uploadBytesResumable, getDownloadURL };
 
 // Verilənlər strukturu:
 // emlak_crm/
