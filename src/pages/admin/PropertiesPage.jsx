@@ -25,8 +25,10 @@ export default function PropertiesPage() {
   const [seeding, setSeeding] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [uploadStage, setUploadStage] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadTotal, setUploadTotal] = useState(0)
+  const [uploadError, setUploadError] = useState('')
 
   useEffect(() => watchProperties(tenantId, setProperties), [tenantId])
 
@@ -68,23 +70,32 @@ export default function PropertiesPage() {
   async function handleImageUpload(e) {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
+    if (!tenantId) {
+      setUploadError('Tenant ID tapılmadı — səhifəni yenilə və yenidən sına.')
+      return
+    }
     setUploading(true)
+    setUploadError('')
     setUploadTotal(files.length)
     setUploadProgress(0)
+    setUploadStage('Başlayır...')
     try {
-      const urls = await uploadPropertyImages(tenantId, files, (idx, pct) => {
+      const urls = await uploadPropertyImages(tenantId, files, (idx, pct, stage) => {
         setUploadProgress(Math.round(((idx + pct / 100) / files.length) * 100))
+        setUploadStage(stage === 'compressing' ? `Sıxılır (${idx + 1}/${files.length})` : `Yüklənir (${idx + 1}/${files.length})`)
       })
       setForm((f) => ({
         ...f,
         images: [...f.images.split('\n').map((s) => s.trim()).filter(Boolean), ...urls].join('\n'),
       }))
     } catch (err) {
-      alert('Şəkil yüklənərkən xəta baş verdi: ' + err.message)
+      console.error('Şəkil yükləmə xətası:', err)
+      setUploadError(err.message || 'Naməlum xəta baş verdi')
     } finally {
       setUploading(false)
       setUploadProgress(0)
       setUploadTotal(0)
+      setUploadStage('')
       e.target.value = ''
     }
   }
@@ -242,7 +253,7 @@ export default function PropertiesPage() {
               {uploading ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Yüklənir... {uploadProgress}% ({uploadTotal} şəkil)
+                  {uploadStage} — {uploadProgress}%
                 </>
               ) : (
                 <>
@@ -258,6 +269,12 @@ export default function PropertiesPage() {
                 className="hidden"
               />
             </label>
+
+            {uploadError && (
+              <p className="mt-2 rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-xs text-red-300">
+                ⚠️ {uploadError}
+              </p>
+            )}
 
             {imageList.length > 0 && (
               <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
