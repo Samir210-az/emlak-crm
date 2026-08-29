@@ -3,7 +3,6 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Building2, ArrowRight, Loader2 } from "lucide-react";
 import { db, ref, set, get, tenantPath } from "../lib/firebase.js";
 import { saveSession, slugify } from "../lib/session.js";
-import { notifyTelegram } from "../lib/telegram.js";
 
 const HERO_IMG = "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1800&q=80";
 const cleanPhone = (p) => p.replace(/[^\d]/g, "");
@@ -49,9 +48,11 @@ export default function Auth() {
         plan: "sınaq",
       });
       await set(indexRef, tenantId);
-      notifyTelegram(
-        `🏠 Yeni qeydiyyat — Əmlak CRM\nAgentlik: ${agentlik || ad}\nAd: ${ad}\nTelefon: ${telefon}\nLink: https://emlak-az.vercel.app`
-      );
+      if (window.notifyTelegram) {
+        window.notifyTelegram(
+          `🏠 Yeni qeydiyyat — Əmlak CRM\nAgentlik: ${agentlik || ad}\nAd: ${ad}\nTelefon: ${telefon}\nLink: https://emlak-az.vercel.app`
+        );
+      }
       saveSession(tenantId, { ad, agentlik });
       navigate("/admin");
     } catch (err) {
