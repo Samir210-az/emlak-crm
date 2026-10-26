@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-slate-800 bg-slate-950 py-10 text-center">
       <a
-        href="https://instagram.com/securtiy_group"
+        href="https://aze-ai.az"
         target="_blank"
         rel="noopener noreferrer"
         className="text-sm text-amber-400 transition-colors hover:text-amber-300"
